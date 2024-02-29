@@ -1,7 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Ionicons";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../config/firebase";
 
 import {
   StyleSheet,
@@ -11,25 +13,15 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 
-const url = "https://65445bd25a0b4b04436c4997.mockapi.io/Loginapp";
-
-const Login = () => {
+const Login2 = () => {
   const navigation = useNavigation();
-  const [sdt, setSdt] = useState("");
   const [pass, setPass] = useState("");
   const [email, setEmail] = useState("");
   const [state, setState] = useState([]);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-
-  useEffect(() => {
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setState(data);
-      });
-  }, []);
 
   const handlePasswordVisibility = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -39,30 +31,21 @@ const Login = () => {
     navigation.navigate('Quenmatkhau');
   };
 
-  const handleCheck = () => {
-    // const user = state.find((user) => user.sdt === sdt && user.pass === pass); // sđt
-    const user = state.find((user) => user.email === email && user.pass === pass);
-    if (user) {
-      showToast("Đăng nhập thành công", "success"); // Thêm tham số type là "success"
-      setTimeout(() => {
-        navigation.navigate("TinNhan");
-      }, 3000); // Chuyển hướng sau 3 giây
-    } else {
-      showToast("Email hoặc mật khẩu không đúng!", "error");
-      setPass("");
+  const onHandleLogin = () => {
+    if (email !== "" && pass !== "") {
+      signInWithEmailAndPassword(auth, email, pass)
+        .then(() => {
+          // console.log("Login success");
+          showToast("Đăng nhập thành công", "success"); // Thêm thông báo thành công
+          setTimeout(() => {
+            navigation.navigate("MyTabs"); // Thực hiện điều hướng sau 3 giây
+          }, 3000); // Chuyển hướng sau 3 giây
+        })
+        .catch((err) => {
+          showToast("Email hoặc mật khẩu không đúng!", "error"); // Thêm thông báo không thành công
+        });
     }
   };
-
-  // const onHandleLogin = () => {
-  //   if (email !== "" && pass !== "") {
-  //     signInWithEmailAndPassword(auth, email, pass)
-  //       .then(() => {
-  //         console.log("Login success");
-  //         navigation.navigate("TinNhan"); // Thực hiện điều hướng sau khi đăng nhập thành công
-  //       })
-  //       .catch((err) => Alert.alert("Login error", err.message));
-  //   }
-  // };
 
   const showToast = (message, type) => {
     Toast.show({
@@ -80,7 +63,7 @@ const Login = () => {
       <View style={styles.toastContainer}>
         <Toast ref={(ref) => Toast.setRef(ref)} />
       </View>
-
+      
       <View style={styles.view1}>
         <Pressable onPress={() => navigation.goBack()}>
           <View style={styles.iconback}>
@@ -91,17 +74,10 @@ const Login = () => {
       </View>
 
       <View style={styles.view2}>
-        <Text style={styles.textNote}>Vui lòng nhập số điện thoại và mật khẩu đăng nhập</Text>
+        <Text style={styles.textNote}>Vui lòng nhập email và mật khẩu để đăng nhập</Text>
       </View>
-      {/* số điện thoại */}
-      {/* <View style={styles.view3}>
-        <TextInput
-          style={styles.textInsdt}
-          placeholder="Số điện thoại"
-          value={sdt}
-          onChangeText={(text) => setSdt(text)}
-        /> */} 
-        <View style={styles.view3}>
+
+      <View style={styles.view3}>
         <TextInput
           style={styles.textInsdt}
           placeholder="Email"
@@ -129,13 +105,13 @@ const Login = () => {
         </View>
 
         <View style={styles.view4}>
-          <Pressable style={styles.PreLogin} onPress={handleCheck}>
+          <Pressable style={styles.PreLogin} onPress={onHandleLogin}>
             <Text style={styles.textLogin}>Đăng nhập</Text>
           </Pressable>
         </View>
 
       </View>
-
+      
     </View>
   );
 };
@@ -143,7 +119,6 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
   },
   toastContainer: {
     position: 'absolute',
@@ -155,9 +130,11 @@ const styles = StyleSheet.create({
   view1: {
     flexDirection: "row",
     backgroundColor: "#66E86B",
+    marginTop: 30,
   },
   view2: {
     backgroundColor: "#D9D9D9",
+    alignItems: "center",
   },
   textNote: {
     fontSize: 16,
@@ -238,4 +215,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Login2;

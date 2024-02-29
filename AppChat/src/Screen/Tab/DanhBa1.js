@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 import {
   StyleSheet,
@@ -16,6 +17,9 @@ const DanhBa1 = () => {
   const navigation = useNavigation();
   const [selectedMenuItem, setSelectedMenuItem] = useState("Friends");
   const [selectedButton, setSelectedButton] = useState('All');
+
+  // const route = useRoute();
+  // const name = route.params.name;
 
   useEffect(() => {
     // Set mặc định là tab "Bạn bè" được chọn khi component được render lần đầu
@@ -488,7 +492,7 @@ const DanhBa1 = () => {
         )}
       </View>
 
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.menuContainer}>
           <MenuItem
             icon="chatbubbles-outline"
@@ -516,7 +520,7 @@ const DanhBa1 = () => {
             routeName="CaNhan"
           />
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -531,6 +535,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#66E86B",
     paddingVertical: 20,
     justifyContent: 'space-between',
+    marginTop: 30,
   },
   iconContainer: {
     marginLeft: 5,

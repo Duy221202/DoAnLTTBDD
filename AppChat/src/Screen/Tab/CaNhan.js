@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 import {
   StyleSheet,
@@ -14,16 +15,18 @@ import {
 const CaNhan = () => {
   const navigation = useNavigation();
   const [selectedMenuItem, setSelectedMenuItem] = useState("CaNhan");
+  // const route = useRoute();
+  // const name = route.params.name;
 
   // Hàm để cập nhật trạng thái khi chuyển đổi giữa các tab menu
-  const handleMenuChange = (menuItem) => {
-    if (selectedMenuItem !== menuItem) {
-      setSelectedMenuItem(menuItem); // Cập nhật trạng thái trước khi chuyển trang
-      navigation.navigate(menuItem);
-    }
-  };
+  // const handleMenuChange = (menuItem) => {
+  //   if (selectedMenuItem !== menuItem) {
+  //     setSelectedMenuItem(menuItem); // Cập nhật trạng thái trước khi chuyển trang
+  //     navigation.navigate(menuItem);
+  //   }
+  // };
 
-  // Component MenuItem
+  // // Component MenuItem
   const MenuItem = ({ icon, text, routeName }) => {
     const isSelected = selectedMenuItem === routeName;
     const handlePress = () => {
@@ -49,6 +52,32 @@ const CaNhan = () => {
       </Pressable>
     );
   };
+
+  // const MenuItem = ({ icon, text, routeName, navigation }) => {
+  //   const isSelected = selectedMenuItem === routeName;
+  //   const handlePress = () => {
+  //     navigation.navigate(routeName); // Điều hướng đến routeName
+  
+  //     // Trong trường hợp cần truyền name, hãy xác định name và truyền nó
+  //     if (name) {
+  //       navigation.setParams({ name: name });
+  //     }
+  //   };
+  
+  //   return (
+  //     <Pressable
+  //       style={styles.menuItem}
+  //       onPress={handlePress}
+  //     >
+  //       <Icon
+  //         name={icon}
+  //         size={30}
+  //         color={isSelected ? "blue" : "#66E86B"}
+  //       />
+  //       <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
+  //     </Pressable>
+  //   );
+  // };
 
   return (
     <View style={styles.container}>
@@ -77,6 +106,7 @@ const CaNhan = () => {
           />
           <View style={styles.userInfo}>
             <Text style={styles.userName}>Cá Nhân</Text>
+            {/* <Text style={styles.userName}>{name}</Text> */}
             <Text style={styles.userMessage}>Xem trang cá nhân</Text>
           </View>
         </Pressable>
@@ -188,7 +218,7 @@ const CaNhan = () => {
       </View>
 
       {/* Footer */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.menuContainer}>
           <MenuItem
             icon="chatbubbles-outline"
@@ -216,7 +246,7 @@ const CaNhan = () => {
             routeName="CaNhan" // Thay bằng route name của màn hình cá nhân
           />
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -231,6 +261,7 @@ const CaNhan = () => {
       backgroundColor: "#66E86B",
       paddingVertical: 20,
       justifyContent: 'space-between',
+      marginTop: 30,
     },
     iconContainer: {
       marginLeft: 5,

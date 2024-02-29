@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 import {
   StyleSheet,
@@ -14,6 +15,9 @@ import {
 const KhamPha = () => {
   const navigation = useNavigation();
   const [selectedMenuItem, setSelectedMenuItem] = useState("KhamPha");
+  
+  // const route = useRoute();
+  // const name = route.params.name;
 
   // Hàm để cập nhật trạng thái khi chuyển đổi giữa các tab menu
   const handleMenuChange = (menuItem) => {
@@ -87,7 +91,7 @@ const KhamPha = () => {
       </View>
       
       {/* Footer */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.menuContainer}>
           <MenuItem
             icon="chatbubbles-outline"
@@ -115,7 +119,7 @@ const KhamPha = () => {
             routeName="CaNhan" // Thay bằng route name của màn hình cá nhân
           />
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -131,6 +135,7 @@ const KhamPha = () => {
       backgroundColor: "#66E86B",
       paddingVertical: 20,
       justifyContent: 'space-between',
+      marginTop: 30, 
     },
     iconContainer: {
       marginLeft: 5,

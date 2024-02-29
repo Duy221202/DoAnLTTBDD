@@ -3,6 +3,11 @@ import React, { useEffect, useState, useRef } from "react"; // Thêm useRef từ
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Ionicons";
 import Modal from "react-native-modal";
+// import { createUserWithEmailAndPassword } from 'firebase/auth';
+// import { auth } from '../../config/firebase';
+
+// import PhoneInput from 'react-phone-input-2'
+// import 'react-phone-input-2/lib/style.css'
 
 import {
   StyleSheet,
@@ -16,10 +21,21 @@ import {
 
 const Quenmatkhau = () => {
   const navigation = useNavigation();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  // const [pass, setPass] = useState("");
+  // const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(""); // số điện thoại
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState("");
   //const phoneNumberInputRef = useRef(null); // Sử dụng useRef để tạo tham chiếu
+
+  // const onHandleSignup = () => {
+  //   //if (email !== '' && password !== '') {
+  //   if (email !== '' ) {
+  //   createUserWithEmailAndPassword(auth, email)
+  //       .then(() => console.log('Signup success'))
+  //       .catch((err) => Alert.alert("Login error", err.message));
+  //   }
+  // };
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -90,17 +106,25 @@ const Quenmatkhau = () => {
       <View style={styles.view3}>
         <TextInput
           //ref={phoneNumberInputRef}
+          // country={'us'}
           style={styles.textInsdt}
           placeholder="Số điện thoại"
           value={phoneNumber}
           onChangeText={handleChangePhoneNumber}
           keyboardType="numeric" // Chỉ cho phép nhập số
         />
+        {/* <TextInput
+          style={styles.textInsdt}
+          placeholder="Email"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        /> */}
         {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
       </View>
 
       <View style={styles.view4}>
         <Pressable style={styles.PreQMK} onPress={() =>handleContinue()}>
+        {/* <Pressable style={styles.PreQMK} onPress={() =>onHandleSignup()}> */}
           <Text style={styles.textNext}>Tiếp tục</Text>
         </Pressable>
       </View>
@@ -166,22 +190,22 @@ const styles = StyleSheet.create({
   },
   view3: {
     marginTop: 10,
-    justifyContent: "center",
+    //justifyContent: "center",
     alignItems: "center",
   },
   textInsdt: {
     height: 50,
-    width: 350,
+    width: "80%",
     borderColor: "gray",
     borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    borderRadius: 10,
+    paddingHorizontal: 15,
     marginBottom: 20,
     fontSize: 18,
   },
   view4: {
     alignItems: 'center',
-    justifyContent: 'center',
+    //justifyContent: 'center',
   },
   textNext: {
     fontSize: 18,
@@ -190,12 +214,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   PreQMK: {
-    margin: 40,
+    //margin: 40,
     backgroundColor: "#66E86B",
     height: 50,
-    width: 230,
-    borderRadius: 20,
-    padding: 10,
+    width: "60%",
+    // borderRadius: 20,
+    // padding: 10,
+    borderRadius: 25, // Tăng độ cong của góc để nút trông tròn hơn
+    justifyContent: "center", // Canh giữa nội dung theo chiều dọc
+    alignItems: "center", // Canh giữa nội dung theo chiều ngang
   },
   modalContainer: {
     backgroundColor: '#fff',

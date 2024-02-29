@@ -3,7 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Welcome from "./src/Screen/Welcome/Welcome";
 import Login from "./src/Screen/DangNhap/Login";
-import Home from "./src/Components/ScreenWelcome/Home";
+import MyTabs from "./src/Screen/Tab/MyTabs";
+import Login2 from "./src/Screen/DangNhap/Login2";
+import DangKyMail from "./src/Screen/DangKy/DangKyMail";
+import DatTenUser from "./src/Screen/DangKy/DatTenUser";
 import Dangky from "./src/Screen/DangKy/Dangky";
 import Dangky2 from "./src/Screen/DangKy/Dangky2";
 import KichhoatTK from "./src/Screen/DangKy/KichhoatTK";
@@ -18,21 +21,22 @@ import KhamPha from "./src/Screen/Tab/KhamPha";
 import NhatKy from "./src/Screen/Tab/NhatKy";
 import CaNhan from "./src/Screen/Tab/CaNhan";
 
-//import Groups from "./src/Screen/Tab/Groups";
-
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Login" component={Login} /> */}
-        <Stack.Screen name="TinNhan" component={TinNhan} />
+        <Stack.Screen name="Welcome" component={Welcome} />       
+        <Stack.Screen name="Login2" component={Login2} />
+        <Stack.Screen name="MyTabs" component={MyTabs} />
+        {/* <Stack.Screen name="Login" component={Login} /> */}
+        <Stack.Screen name="DangKyMail" component={DangKyMail} />
+        <Stack.Screen name="DatTenUser" component={DatTenUser} />
+        {/* <Stack.Screen name="TinNhan" component={TinNhan} />
         <Stack.Screen name="DanhBa1" component={DanhBa1} />
-        {/* <Stack.Screen name="Groups" component={Groups} /> */}
         <Stack.Screen name="KhamPha" component={KhamPha} />
         <Stack.Screen name="NhatKy" component={NhatKy} />
-        <Stack.Screen name="CaNhan" component={CaNhan} />
+        <Stack.Screen name="CaNhan" component={CaNhan} /> */}
         
         <Stack.Screen name="Dangky" component={Dangky} />
         <Stack.Screen name="Dangky2" component={Dangky2} />

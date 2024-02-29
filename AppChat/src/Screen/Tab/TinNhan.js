@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 import {
   StyleSheet,
@@ -14,7 +15,10 @@ import {
 const TinNhan = () => {
   const navigation = useNavigation();
   const [selectedMenuItem, setSelectedMenuItem] = useState("TinNhan"); // Khởi tạo trạng thái ban đầu là TinNhan
-    
+  
+  // const route = useRoute();
+  // const name = route.params.name; 
+
   // Component MenuItem
   const MenuItem = ({ icon, text, routeName }) => {
     const isSelected = selectedMenuItem === routeName; // Kiểm tra xem có phải routeName đang được chọn hay không
@@ -44,6 +48,27 @@ const TinNhan = () => {
       </Pressable>
     );
   };
+
+  // const MenuItem = ({ icon, text, routeName, navigation, name }) => {
+  //   const isSelected = selectedMenuItem === routeName;
+  //   const handlePress = () => {
+  //     navigation.navigate(routeName, { name: name });
+  //   };
+  
+  //   return (
+  //     <Pressable
+  //       style={styles.menuItem}
+  //       onPress={handlePress}
+  //     >
+  //       <Icon
+  //         name={icon}
+  //         size={30}
+  //         color={isSelected ? "blue" : "#66E86B"}
+  //       />
+  //       <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
+  //     </Pressable>
+  //   );
+  // };
 
   return (
     <View style={styles.container}>
@@ -96,7 +121,7 @@ const TinNhan = () => {
       </View>
       
       {/* Footer */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.menuContainer}>
           <MenuItem
             icon="chatbubbles-outline"
@@ -127,9 +152,10 @@ const TinNhan = () => {
             text="Cá nhân"
             routeName="CaNhan" // Thay bằng route name của màn hình cá nhân
             navigation={navigation}
+            //name={name} // Truyền giá trị name vào MenuItem thông qua props
           />
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -145,6 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#66E86B",
     paddingVertical: 20,
     justifyContent: 'space-between',
+    marginTop: 30, // canh chỉnh phù hợp với android
   },
   iconContainer: {
     marginLeft: 5,

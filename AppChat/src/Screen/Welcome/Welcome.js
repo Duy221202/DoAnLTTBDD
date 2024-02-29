@@ -8,12 +8,13 @@ const Welcome = () => {
 
   const handleLogin = () => {
     // Handle login navigation
-    navigation.navigate('Login');
+    navigation.navigate('Login2');
   };
 
   const handleRegister = () => {
     // Handle registration navigation
-    navigation.navigate('Dangky');
+    //navigation.navigate('Dangky');
+    navigation.navigate('DangKyMail');
   };
 
   const handleLanguageChange = (language) => {
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
     justifyContent: "center",
+    marginTop: 30, // Canh chỉnh phù hợp với android
   },
   welcomeText: {
     fontSize: 50,
