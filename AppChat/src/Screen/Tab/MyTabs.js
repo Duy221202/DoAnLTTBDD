@@ -1,24 +1,26 @@
 import React from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from "react-native-vector-icons/Ionicons";
-import {  StyleSheet } from "react-native";
 
 import TinNhan from "./TinNhan";
 import DanhBa1 from "./DanhBa1";
 import KhamPha from "./KhamPha";
 import NhatKy from "./NhatKy";
 import CaNhan from "./CaNhan";
+import Profile from "./Profile";
 
 const Tab = createBottomTabNavigator();
-
-function MyTabs() {
+function MyTabs({ route }) {
+  // const name = route.params?.name; // Kiểm tra và truy cập name từ route params
+  // const img = route.params?.img;
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: '#e91e63',
-        // tabBarStyle: {
-        //   marginTop: 10, // Điều chỉnh khoảng cách từ thanh tab đến đáy màn hình
-        // },
+        tabBarStyle: {
+          paddingBottom: 10, // Đảm bảo khoảng cách dưới của thanh tab
+          safeAreaInsets: { bottom: 0 } // Đảm bảo không bị chồng lên bởi safe area
+        },
       }}
     >
       <Tab.Screen
@@ -26,7 +28,6 @@ function MyTabs() {
         component={TinNhan}
         options={{
           headerShown: false,
-          //tabBarLabel: 'Tin nhắn',
           tabBarIcon: ({ focused }) => (
             focused ? (
               <Icon name="chatbubbles-outline" size={24} color="blue" />
@@ -80,6 +81,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Cá Nhân"
+        //initialParams={{ name: name, img: img}} // Truyền name, img qua trang CaNhan
         component={CaNhan}
         options={{
           headerShown: false,
@@ -92,15 +94,23 @@ function MyTabs() {
           ),
         }}
       />
+      {/* <Tab.Screen
+        name="Cá Nhân"
+        //initialParams={{ name: name, img: img}} // Truyền name, img qua trang CaNhan
+        component={Profile}
+        // options={{
+        //   headerShown: false,
+        //   tabBarIcon: ({ focused }) => (
+        //     focused ? (
+        //       <Icon name="person-circle-outline" size={24} color="blue" />
+        //     ) : (
+        //       <Icon name="person-circle-outline" size={24} color="#66E86B" />
+        //     )
+        //   ),
+        // }}
+      /> */}
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBarStyle: {
-    // Adjust the margin from the bottom of the screen
-    marginTop: 10,
-  },
-});
 
 export default MyTabs;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const Welcome = () => {
@@ -22,7 +22,7 @@ const Welcome = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.welcomeContainer}>
         <Text style={styles.welcomeText}>Alo</Text>
         <Text style={styles.textwel}>Nơi giúp bạn trao đổi với mọi người thông qua chat và video call dễ dàng hơn</Text>
@@ -49,7 +49,7 @@ const Welcome = () => {
           </TouchableOpacity>
         </View>
 
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -58,10 +58,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeContainer: {
+    // alignItems: "center",
+    // paddingHorizontal: 10,
+    // justifyContent: "center",
+    // marginTop: 30, // Canh chỉnh phù hợp với android
+    flex: 1,
     alignItems: "center",
-    paddingHorizontal: 10,
     justifyContent: "center",
-    marginTop: 30, // Canh chỉnh phù hợp với android
+    paddingHorizontal: 10,
+    paddingVertical: 30,
   },
   welcomeText: {
     fontSize: 50,
@@ -97,9 +102,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   footer: {
+    // flexDirection: 'row',
+    // marginTop: 70,
+    // justifyContent: 'space-around',
     flexDirection: 'row',
-    marginTop: 70,
+    marginTop: 'auto', // Đặt margin top tự động điều chỉnh dựa trên phần còn lại của không gian trống
     justifyContent: 'space-around',
+    marginBottom: 20, // Để tránh việc footer bị chạm vào bottom edge
   },
   footerText: {
     fontSize: 18,

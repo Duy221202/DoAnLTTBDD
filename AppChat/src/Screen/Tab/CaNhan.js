@@ -1,83 +1,72 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { useRoute } from '@react-navigation/native'; // Import useRoute
+import { Alert, StyleSheet, View, Text, Pressable, Image, TextInput} from "react-native";
+import { auth } from "../../../config/firebase";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  Image,
-  TextInput,
-} from "react-native";
+import Modal from "react-native-modal";
 
 const CaNhan = () => {
   const navigation = useNavigation();
-  const [selectedMenuItem, setSelectedMenuItem] = useState("CaNhan");
-  // const route = useRoute();
-  // const name = route.params.name;
+  const firestore = getFirestore();
+  const [displayName, setDisplayName] = useState('');
+  const [photoURL, setPhotoURL] = useState(null);
 
-  // Hàm để cập nhật trạng thái khi chuyển đổi giữa các tab menu
-  // const handleMenuChange = (menuItem) => {
-  //   if (selectedMenuItem !== menuItem) {
-  //     setSelectedMenuItem(menuItem); // Cập nhật trạng thái trước khi chuyển trang
-  //     navigation.navigate(menuItem);
-  //   }
-  // };
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setDisplayName(user.displayName);
+        fetchPhotoURL(user.uid);
+      } else {
+        setDisplayName('');
+        setPhotoURL(null);
+      }
+    });
 
-  // // Component MenuItem
-  const MenuItem = ({ icon, text, routeName }) => {
-    const isSelected = selectedMenuItem === routeName;
-    const handlePress = () => {
-        navigation.navigate(routeName); // Điều hướng đến trang tương ứng
-    
-        // Sử dụng hàm callback của navigate để cập nhật trạng thái selectedMenuItem sau khi điều hướng đã hoàn tất
-        navigation.addListener('transitionEnd', () => {
-          setSelectedMenuItem(routeName);
-        });
-    };
+    return unsubscribe;
+  }, []);
 
-    return (
-      <Pressable
-        style={styles.menuItem}
-        onPress={handlePress}
-      >
-        <Icon
-          name={icon}
-          size={30}
-          color={isSelected ? "blue" : "#66E86B"}
-        />
-        <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
-      </Pressable>
-    );
+  useEffect(() => {
+    // Cập nhật lại ảnh đại diện khi quay lại từ trang Profile
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Fetch ảnh đại diện mới từ Firestore hoặc từ state nếu đã cập nhật
+      if (auth.currentUser) {
+        fetchPhotoURL(auth.currentUser.uid);
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  // Method hiện thị ảnh cá nhân
+  const fetchPhotoURL = async (userId) => {
+    try {
+      const userRef = doc(firestore, 'users', userId);
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setPhotoURL(userData.photoURL);
+      }
+    } catch (error) {
+      console.error("Error fetching photo URL: ", error);
+    }
   };
 
-  // const MenuItem = ({ icon, text, routeName, navigation }) => {
-  //   const isSelected = selectedMenuItem === routeName;
-  //   const handlePress = () => {
-  //     navigation.navigate(routeName); // Điều hướng đến routeName
-  
-  //     // Trong trường hợp cần truyền name, hãy xác định name và truyền nó
-  //     if (name) {
-  //       navigation.setParams({ name: name });
-  //     }
-  //   };
-  
-  //   return (
-  //     <Pressable
-  //       style={styles.menuItem}
-  //       onPress={handlePress}
-  //     >
-  //       <Icon
-  //         name={icon}
-  //         size={30}
-  //         color={isSelected ? "blue" : "#66E86B"}
-  //       />
-  //       <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
-  //     </Pressable>
-  //   );
-  // };
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+
+  const toggleLogoutModal = () => {
+    setIsLogoutModalVisible(!isLogoutModalVisible);
+  };
+
+  const handleLogout = () => {
+    // Hiển thị modal logout khi người dùng muốn đăng xuất
+    toggleLogoutModal();
+  };
+
+  const confirmLogout = () => {
+    navigation.navigate('Welcome');
+  };
 
   return (
     <View style={styles.container}>
@@ -96,17 +85,16 @@ const CaNhan = () => {
       <View style={styles.body}>
         <Pressable
           style={styles.userContainer}
-          onPress={() => navigation.navigate('UserProfile')}
-        >
-          <Icon
-            name="person-circle-outline"
-            size={50}
-            color="#66E86B"
-            style={styles.userIcon}
-          />
+          //onPress={() => navigation.navigate('Profile')}>
+          onPress={() => navigation.navigate('ThongTinUser')}>
+          {photoURL ? (
+          <Image source={{ uri: photoURL }} style={styles.imgdaidien} />
+          ) : (
+            <Text>No avatar</Text>
+          )}
+
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>Cá Nhân</Text>
-            {/* <Text style={styles.userName}>{name}</Text> */}
+            <Text style={styles.userName}>{displayName}</Text>
             <Text style={styles.userMessage}>Xem trang cá nhân</Text>
           </View>
         </Pressable>
@@ -120,7 +108,7 @@ const CaNhan = () => {
         >
           <Icon
             name="musical-notes-outline"
-            size={50}
+            size={45}
             color="blue"
             style={styles.userIcon}
           />
@@ -136,7 +124,7 @@ const CaNhan = () => {
         >
           <Icon
             name="qr-code-outline"
-            size={50}
+            size={45}
             color="blue"
             style={styles.userIcon}
           />
@@ -152,7 +140,7 @@ const CaNhan = () => {
         >
           <Icon
             name="cloud-outline"
-            size={50}
+            size={45}
             color="blue"
             style={styles.userIcon}
           />
@@ -171,7 +159,7 @@ const CaNhan = () => {
         >
           <Icon
             name="pie-chart-outline"
-            size={50}
+            size={45}
             color="blue"
             style={styles.userIcon}
           />
@@ -190,13 +178,12 @@ const CaNhan = () => {
         >
           <Icon
             name="key"
-            size={50}
+            size={45}
             color="blue"
             style={styles.userIcon}
           />
-          <View style={styles.userInfo}>
+          <View style={styles.userInfo1}>
             <Text style={styles.userName}>Tài khoản và bảo mật</Text>
-            <Text style={styles.userMessage}>...</Text>
           </View>
         </Pressable>
 
@@ -206,47 +193,51 @@ const CaNhan = () => {
         >
           <Icon
             name="lock-closed-outline"
-            size={50}
+            size={45}
             color="blue"
             style={styles.userIcon}
           />
-          <View style={styles.userInfo}>
+          <View style={styles.userInfo1}>
             <Text style={styles.userName}>Quyền riêng tư</Text>
-            <Text style={styles.userMessage}>...</Text>
           </View>
         </Pressable>
+
+      </View>
+      
+      {/* Footer */}
+      <View style={styles.footer}>
+        {/* <Pressable
+          onPress={handleLogout}
+          style={({ pressed }) => [
+            styles.logoutButton,
+            {
+              borderColor: pressed ? 'gray' : 'lightgray', // Màu sắc khung border
+            },
+          ]}
+        >
+          <Icon name="log-out-outline" size={20} color="red" style={styles.logoutIcon} />
+          <Text style={styles.logoutText}>Log out</Text>
+        </Pressable> */}
       </View>
 
-      {/* Footer */}
-      {/* <View style={styles.footer}>
-        <View style={styles.menuContainer}>
-          <MenuItem
-            icon="chatbubbles-outline"
-            text="Tin nhắn"
-            routeName="TinNhan" // Thay bằng route name của màn hình Tin nhắn
-          />
-          <MenuItem
-            icon="person-outline"
-            text="Danh bạ"
-            routeName="DanhBa1" // Thay bằng route name của màn hình danh bạ
-          />
-          <MenuItem
-            icon="apps"
-            text="Khám phá"
-            routeName="KhamPha" // Thay bằng route name của màn hình khám phá
-          />
-          <MenuItem
-            icon="book-outline"
-            text="Nhật ký"
-            routeName="NhatKy" // Thay bằng route name của màn hình nhật ký
-          />
-          <MenuItem
-            icon="person-circle-outline"
-            text="Cá nhân"
-            routeName="CaNhan" // Thay bằng route name của màn hình cá nhân
-          />
+      {/* Modal Logout */}
+      {/* <Modal isVisible={isLogoutModalVisible} onBackdropPress={toggleLogoutModal}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>
+            Bạn có muốn đăng xuất không?
+          </Text>
+
+          <View style={styles.modalButtonContainer}>
+            <Pressable style={styles.modalButton} onPress={toggleLogoutModal}>
+              <Text style={styles.modalButtonText}>Cancel</Text>
+            </Pressable>
+            <Pressable style={styles.modalButton} onPress={confirmLogout}>
+              <Text style={styles.modalButtonText}>Đăng xuất</Text>
+            </Pressable>
+          </View>
         </View>
-      </View> */}
+      </Modal> */}
+
     </View>
   );
 };
@@ -283,28 +274,39 @@ const CaNhan = () => {
     },
     userContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 10,
-      paddingBottom: 10,
+      paddingHorizontal: 5,
+      paddingVertical: 10,
+    },
+    imgdaidien: {
+      width: 60,
+      height: 60,
+      borderRadius: 40,
     },
     userIcon: {
       marginRight: 10,
     },
     userInfo: {
       flex: 1,
+      marginLeft: 10,
+      marginTop: 5,
     },
     userName: {
       fontSize: 18,
       fontWeight: 'bold',
     },
     userMessage: {
-      fontSize: 16,
+      fontSize: 15,
       color: 'gray',
+    },
+    userInfo1: {
+      flex: 1,
+      marginLeft: 10,
+      marginTop: 12,
     },
     // thanh cắt ngang
     separator: {
       height: 5, // Độ cao của thanh phân cách
-      backgroundColor: '#ccc', // Màu sắc của thanh phân cách
+      backgroundColor: '#ccc',
       marginVertical: 5, // Khoảng cách dọc giữa các phần
     },
     footer: {
@@ -312,19 +314,57 @@ const CaNhan = () => {
       alignItems: "center",
       marginBottom: 20,
     },
-    menuContainer: {
-      width: "100%",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingHorizontal: 10,
+    logoutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderRadius: 5,
+      borderColor: 'lightgray',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
     },
-    menuItem: {
-      alignItems: "center",
-      flex: 1,
+    logoutIcon: {
+      marginRight: 5,
+      transform: [{ rotateY: '180deg' }] // Quay ngược lại
+    },
+    logoutText: {
+      fontSize: 18,
+      color: 'red',
+      fontWeight: 'bold',
     },
     icon: {
       marginLeft: 10,
+    },
+    // Modal
+    modalContainer: {
+      backgroundColor: '#fff',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    modalText: {
+      fontSize: 20, 
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    modalButtonContainer: {
+      flexDirection: 'row', 
+      justifyContent: 'space-between', 
+      width: '100%', 
+    },
+    modalButton: {
+      backgroundColor: '#007bff',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 20,
+      marginVertical: 5,
+      width: '45%', // Định kích thước của các nút
+    },
+    modalButtonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center', 
     },
 });
 export default CaNhan;

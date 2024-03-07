@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Ionicons";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../config/firebase";
+import { auth, imgDB } from "../../../config/firebase";
 
 import {
   StyleSheet,
@@ -16,12 +16,13 @@ import {
   Alert,
 } from "react-native";
 
-const Login2 = () => {
+const Login2 = ({ route }) => {
   const navigation = useNavigation();
   const [pass, setPass] = useState("");
   const [email, setEmail] = useState("");
   const [state, setState] = useState([]);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  //const { name, img } = route.params; // Kiểm tra và truy cập name, img từ route params
 
   const handlePasswordVisibility = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -31,21 +32,40 @@ const Login2 = () => {
     navigation.navigate('Quenmatkhau');
   };
 
+  // const onHandleLogin = () => {
+  //   if (email !== "" && pass !== "" ) {
+  //     signInWithEmailAndPassword(auth, email, pass)
+  //       .then(() => {         
+  //         // console.log("Login success");
+  //         showToast("Đăng nhập thành công", "success"); // Thêm thông báo thành công
+  //         setTimeout(() => {
+  //           //navigation.navigate('MyTabs'); // Thực hiện điều hướng sau 3 giây
+  //           navigation.navigate('MyTabs', { name: name }); // Thay "Tên người dùng" bằng tên người dùng thực tế từ Firebase
+  //         }, 3000); // Chuyển hướng sau 3 giây
+  //       })
+  //       .catch((err) => {
+  //         showToast("Email hoặc mật khẩu không đúng!", "error"); // Thêm thông báo không thành công
+  //       });
+  //   }
+  // };
+
   const onHandleLogin = () => {
     if (email !== "" && pass !== "") {
       signInWithEmailAndPassword(auth, email, pass)
-        .then(() => {
-          // console.log("Login success");
-          showToast("Đăng nhập thành công", "success"); // Thêm thông báo thành công
+        .then((userCredential) => {
+          const user = userCredential.user; // Lấy thông tin người dùng từ userCredential và lưu vào biến user
+          showToast("Đăng nhập thành công", "success");
           setTimeout(() => {
-            navigation.navigate("MyTabs"); // Thực hiện điều hướng sau 3 giây
-          }, 3000); // Chuyển hướng sau 3 giây
+            //navigation.navigate('MyTabs', { name: user.displayName }); // Pass user's display name to MyTabs screen
+            navigation.navigate('MyTabs');
+          }, 3000);
         })
-        .catch((err) => {
-          showToast("Email hoặc mật khẩu không đúng!", "error"); // Thêm thông báo không thành công
+        .catch((error) => {
+          showToast("Email hoặc mật khẩu không đúng!", "error");
         });
     }
   };
+  
 
   const showToast = (message, type) => {
     Toast.show({

@@ -4,14 +4,6 @@ import { getFirestore } from "firebase/firestore";
 import Constants from "expo-constants";
 // Firebase config
 const firebaseConfig = {
-  // apiKey: Constants.expoConfig.extra.apiKey,
-  // authDomain: Constants.expoConfig.extra.authDomain,
-  // projectId: Constants.expoConfig.extra.projectId,
-  // storageBucket: Constants.expoConfig.extra.storageBucket,
-  // messagingSenderId: Constants.expoConfig.extra.messagingSenderId,
-  // appId: Constants.expoConfig.extra.appId,
-  // databaseURL: Constants.expoConfig.extra.databaseURL,
-  //   @deprecated is deprecated Constants.manifest
   apiKey: "AIzaSyDPV4rIcFfH0LTRmVD1JY2VdHIaJvUQDBs",
   authDomain: "appchat-b6d1e.firebaseapp.com",
   projectId: "appchat-b6d1e",
@@ -23,4 +15,13 @@ const firebaseConfig = {
 // initialize firebase
 initializeApp(firebaseConfig);
 export const auth = getAuth();
-export const database = getFirestore();
+export const firestore = getFirestore();
+
+////
+import { getStorage } from "firebase/storage"
+export const imageDb = getStorage()
+
+const imgDB = getStorage();
+const nameDB = getFirestore();
+
+export {imgDB,nameDB};

@@ -21,6 +21,10 @@ import KhamPha from "./src/Screen/Tab/KhamPha";
 import NhatKy from "./src/Screen/Tab/NhatKy";
 import CaNhan from "./src/Screen/Tab/CaNhan";
 
+import ThongTinUser from "./src/Screen/User/ThongTinUser";
+
+import Profile from "./src/Screen/Tab/Profile";
+
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
@@ -29,15 +33,11 @@ const App = () => {
         <Stack.Screen name="Welcome" component={Welcome} />       
         <Stack.Screen name="Login2" component={Login2} />
         <Stack.Screen name="MyTabs" component={MyTabs} />
-        {/* <Stack.Screen name="Login" component={Login} /> */}
+        <Stack.Screen name="ThongTinUser" component={ThongTinUser} />
         <Stack.Screen name="DangKyMail" component={DangKyMail} />
         <Stack.Screen name="DatTenUser" component={DatTenUser} />
-        {/* <Stack.Screen name="TinNhan" component={TinNhan} />
-        <Stack.Screen name="DanhBa1" component={DanhBa1} />
-        <Stack.Screen name="KhamPha" component={KhamPha} />
-        <Stack.Screen name="NhatKy" component={NhatKy} />
-        <Stack.Screen name="CaNhan" component={CaNhan} /> */}
-        
+        <Stack.Screen name="Profile" component={Profile} />
+
         <Stack.Screen name="Dangky" component={Dangky} />
         <Stack.Screen name="Dangky2" component={Dangky2} />
         <Stack.Screen name="KichhoatTK" component={KichhoatTK} />
@@ -46,6 +46,7 @@ const App = () => {
         <Stack.Screen name="XacthucMK" component={XacthucMK} />
         <Stack.Screen name="TaoMK" component={TaoMK} />
 
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
