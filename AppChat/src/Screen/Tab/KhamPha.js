@@ -135,7 +135,7 @@ const KhamPha = () => {
       backgroundColor: "#66E86B",
       paddingVertical: 20,
       justifyContent: 'space-between',
-      marginTop: 30, 
+      //marginTop: 30, 
     },
     iconContainer: {
       marginLeft: 5,

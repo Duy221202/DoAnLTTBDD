@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, Alert, Image, TouchableOpacity, Pressable } from "react-native";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
-export default function Profile({ setIsLoggedIn }) {
+export default function Profile() {
   const navigation = useNavigation();
   const [displayName, setDisplayName] = useState('');
   const [photoURL, setPhotoURL] = useState(null);
@@ -39,19 +40,6 @@ export default function Profile({ setIsLoggedIn }) {
     } catch (error) {
       console.error("Error fetching photo URL: ", error);
     }
-  };
-
-  // Nút đăng xuất
-  const onHandleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        setIsLoggedIn(false);
-        Alert.alert(
-          'Logout success',
-          'You have logged out successfully!',         
-        );
-      })
-      .catch((err) => Alert.alert("Logout error", err.message));
   };
 
   // Cập nhật ảnh đại diện
@@ -161,6 +149,11 @@ const updatePhotoURL = async (newURL, userId) => {
 };
   
 const onHandleCont = () => {
+    alert(
+      'Signup success',
+      'You have signed up successfully!',
+      [{ text: 'OK'}]
+    );
     navigation.navigate('MyTabs');
   };
 
@@ -168,24 +161,41 @@ const onHandleCont = () => {
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome, {displayName}</Text>
-      <TouchableOpacity onPress={handleUpdatePhoto}>
-        {photoURL ? (
-          <Image source={{ uri: photoURL }} style={styles.avatar} />
-
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarPlaceholderText}>Tap to add photo</Text>
+      {/* Header */}
+      <View style={styles.view1}>
+        <Pressable onPress={() => navigation.goBack()}>
+          <View style={styles.iconback}>
+            <Icon name="chevron-back" size={25} color="white" />
           </View>
-        )}
-      </TouchableOpacity>
-      <Button title="Logout" onPress={onHandleLogout} />
+        </Pressable>
+        <Text style={styles.anhdaidien}>Ảnh đại diện</Text>
+      </View>
+
+      <View style={styles.view2}>
+        <Text style={styles.textNote}>Cập nhật ảnh đại diện đẹp nhất của bạn.</Text>
+      </View>
+
+      <View style={styles.view3}>
+        <Text style={styles.title}>{displayName}</Text>
+        <TouchableOpacity onPress={handleUpdatePhoto}>
+          {photoURL ? (
+            <Image source={{ uri: photoURL }} style={styles.avatar} />
+
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.avatarPlaceholderText}>Add image</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+        <Text style={styles.textanh}>Chọn ảnh của bạn ở đây</Text>
+      </View>
 
       <View style={styles.cont}>
           <Pressable style={styles.PreCont} onPress={onHandleCont}>
             <Text style={styles.textcont}>Tiếp tục</Text>
           </Pressable>
       </View>
+
     </View>
   );
 }
@@ -193,9 +203,35 @@ const onHandleCont = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+  },
+  view1: {
+    flexDirection: "row",
+    backgroundColor: "#66E86B",
+  },
+  view2: {
+    backgroundColor: "#D9D9D9",
+    alignItems: 'flex-start',
+  },
+  textNote: {
+    fontSize: 16,
+  },
+  anhdaidien: {
+    marginLeft: 10,
+    marginTop: 10,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: 'white',
+  },
+  iconback: {
+    marginTop: 15,
+    height: 20,
+    width: 20,
+  },
+  view3: {
+    marginTop: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
@@ -220,7 +256,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#8E8E93",
   },
+  textanh: {
+    fontSize: 15,
+    fontWeight: '200',
+    textAlign: 'center',
+  },
   cont: {
+    marginTop: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },

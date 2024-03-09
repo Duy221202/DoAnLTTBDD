@@ -5,7 +5,6 @@ import { Alert, StyleSheet, View, Text, Pressable, Image, TextInput} from "react
 import { auth } from "../../../config/firebase";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
-import Modal from "react-native-modal";
 
 const CaNhan = () => {
   const navigation = useNavigation();
@@ -53,19 +52,8 @@ const CaNhan = () => {
     }
   };
 
-  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-
-  const toggleLogoutModal = () => {
-    setIsLogoutModalVisible(!isLogoutModalVisible);
-  };
-
-  const handleLogout = () => {
-    // Hiển thị modal logout khi người dùng muốn đăng xuất
-    toggleLogoutModal();
-  };
-
-  const confirmLogout = () => {
-    navigation.navigate('Welcome');
+  const handleSetting = () => {
+    navigation.navigate('CaiDat');
   };
 
   return (
@@ -76,9 +64,9 @@ const CaNhan = () => {
           <Icon name="search" size={25} color="white" style={styles.icon} />
           <TextInput style={styles.textTK} placeholder="Tìm kiếm"></TextInput>
         </View>
-        <View style={styles.iconContainer2}>
+        <Pressable style={styles.iconContainer2} onPress={handleSetting}>
           <Icon name="settings-outline" size={25} color="white" style={styles.icon} />
-        </View>
+        </Pressable>
       </View>
       
       {/* Body */}
@@ -206,37 +194,8 @@ const CaNhan = () => {
       
       {/* Footer */}
       <View style={styles.footer}>
-        {/* <Pressable
-          onPress={handleLogout}
-          style={({ pressed }) => [
-            styles.logoutButton,
-            {
-              borderColor: pressed ? 'gray' : 'lightgray', // Màu sắc khung border
-            },
-          ]}
-        >
-          <Icon name="log-out-outline" size={20} color="red" style={styles.logoutIcon} />
-          <Text style={styles.logoutText}>Log out</Text>
-        </Pressable> */}
+        
       </View>
-
-      {/* Modal Logout */}
-      {/* <Modal isVisible={isLogoutModalVisible} onBackdropPress={toggleLogoutModal}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>
-            Bạn có muốn đăng xuất không?
-          </Text>
-
-          <View style={styles.modalButtonContainer}>
-            <Pressable style={styles.modalButton} onPress={toggleLogoutModal}>
-              <Text style={styles.modalButtonText}>Cancel</Text>
-            </Pressable>
-            <Pressable style={styles.modalButton} onPress={confirmLogout}>
-              <Text style={styles.modalButtonText}>Đăng xuất</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal> */}
 
     </View>
   );
@@ -252,7 +211,7 @@ const CaNhan = () => {
       backgroundColor: "#66E86B",
       paddingVertical: 20,
       justifyContent: 'space-between',
-      marginTop: 30,
+      //marginTop: 30,
     },
     iconContainer: {
       marginLeft: 5,
@@ -313,58 +272,6 @@ const CaNhan = () => {
       justifyContent: "flex-end",
       alignItems: "center",
       marginBottom: 20,
-    },
-    logoutButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderRadius: 5,
-      borderColor: 'lightgray',
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-    },
-    logoutIcon: {
-      marginRight: 5,
-      transform: [{ rotateY: '180deg' }] // Quay ngược lại
-    },
-    logoutText: {
-      fontSize: 18,
-      color: 'red',
-      fontWeight: 'bold',
-    },
-    icon: {
-      marginLeft: 10,
-    },
-    // Modal
-    modalContainer: {
-      backgroundColor: '#fff',
-      padding: 20,
-      borderRadius: 10,
-      alignItems: 'center',
-    },
-    modalText: {
-      fontSize: 20, 
-      fontWeight: 'bold',
-      marginBottom: 10,
-    },
-    modalButtonContainer: {
-      flexDirection: 'row', 
-      justifyContent: 'space-between', 
-      width: '100%', 
-    },
-    modalButton: {
-      backgroundColor: '#007bff',
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 20,
-      marginVertical: 5,
-      width: '45%', // Định kích thước của các nút
-    },
-    modalButtonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
-      textAlign: 'center', 
     },
 });
 export default CaNhan;

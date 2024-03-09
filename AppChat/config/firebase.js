@@ -10,18 +10,16 @@ const firebaseConfig = {
   storageBucket: "appchat-b6d1e.appspot.com",
   messagingSenderId: "168349188203",
   appId: "1:168349188203:web:1e8eb9b75c4b720a3d712e",
-  //databaseURL: Constants.expoConfig.extra.databaseURL,
+  // apiKey: Constants.expoConfig.extra.apiKey,
+  // authDomain: Constants.expoConfig.extra.authDomain,
+  // projectId: Constants.expoConfig.extra.projectId,
+  // storageBucket: Constants.expoConfig.extra.storageBucket,
+  // messagingSenderId: Constants.expoConfig.extra.messagingSenderId,
+  // appId: Constants.expoConfig.extra.appId,
 };
 // initialize firebase
 initializeApp(firebaseConfig);
 export const auth = getAuth();
 export const firestore = getFirestore();
 
-////
-import { getStorage } from "firebase/storage"
-export const imageDb = getStorage()
-
-const imgDB = getStorage();
-const nameDB = getFirestore();
-
-export {imgDB,nameDB};
+//import { getStorage } from "firebase/storage"

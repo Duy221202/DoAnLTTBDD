@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#66E86B",
     paddingVertical: 20,
     justifyContent: 'space-between',
-    marginTop: 30, // canh chỉnh phù hợp với android
+    //marginTop: 30, // canh chỉnh phù hợp với android
   },
   iconContainer: {
     marginLeft: 5,

@@ -44,19 +44,6 @@ function ThongTinUser() {
     }
   };
 
-  // Nút đăng xuất
-  const onHandleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        setIsLoggedIn(false);
-        Alert.alert(
-          'Logout success',
-          'You have logged out successfully!',         
-        );
-      })
-      .catch((err) => Alert.alert("Logout error", err.message));
-  };
-
   // Cập nhật ảnh đại diện
   const handleUpdatePhoto = async () => {
     try {
@@ -163,7 +150,7 @@ const updatePhotoURL = async (newURL, userId) => {
   }
 };
 
-const onHandleCont = () => {
+const onHandleNhatKy = () => {
   navigation.navigate('MyTabs');
 };
 
@@ -191,7 +178,6 @@ return (
          <View style={styles.cutLine}></View>
 
          <View style={styles.avatarContainer}>
-           <TouchableOpacity style={styles.iconContainer2}>
             <TouchableOpacity onPress={handleUpdatePhoto} style={styles.iconCircle}>
               {photoURL ? (
                 <Image source={{ uri: photoURL }} style={styles.iconCircle} />
@@ -202,7 +188,6 @@ return (
                 </View>
               )}
             </TouchableOpacity>
-           </TouchableOpacity>
 
            <Text style={styles.userName}>{displayName}</Text>
 
@@ -214,13 +199,21 @@ return (
          </View>
        </View>
 
-    <Button title="Logout" onPress={onHandleLogout} />
+      {/* Footer */}
+      <View style={styles.footer}>
+          <Image
+              source={require("../../../src/Image/diary.png")}
+              style={styles.welcomeImage}
+            />
 
-    <View style={styles.cont}>
-        <Pressable style={styles.PreCont} onPress={onHandleCont}>
-          <Text style={styles.textcont}>Tiếp tục</Text>
-        </Pressable>
-    </View>
+          <Text style={styles.texttt}>Hôm nay {displayName} có gì vui?</Text>
+
+          <Text style={styles.texttt2}>Đây là nhật ký của bạn - Sống hết mình với đam mê </Text>
+          
+          <Pressable style={styles.PreCont} onPress={onHandleNhatKy}>
+            <Text style={styles.textcont}>Đăng lên Nhật ký</Text>
+          </Pressable>
+      </View>       
   </View>
 );
 }
@@ -250,20 +243,17 @@ cutLine: {
   height: 1,
   backgroundColor: "black",
   position: "absolute",
-  top: "38%",
+  top: "30%",
 },
 avatarContainer: {
   alignItems: "center",
   position: "absolute",
-  top: "22%",
-},
-iconContainer2: {
-  position: 'absolute',
+  top: "16%",
 },
 iconCircle: {
-  width: 120,
-  height: 120,
-  borderRadius: 60,
+  width: 150,
+  height: 150,
+  borderRadius: 100,
   //backgroundColor: '#ccc',
   justifyContent: 'center',
   alignItems: 'center',
@@ -273,7 +263,7 @@ iconCircle: {
 userName: {
   fontSize: 20,
   fontWeight: "bold",
-  marginTop: 120,
+  //marginTop: 150,
 },
 updateContainer: {
   marginTop: 10,
@@ -304,9 +294,24 @@ avatarPlaceholderText: {
   fontSize: 16,
   color: "#8E8E93",
 },
-cont: {
-  alignItems: 'center',
-  justifyContent: 'center',
+// footer
+footer: {
+  alignItems: "center",
+  bottom: "15%",
+},
+welcomeImage: {
+  width: 100,
+  height: 100,
+},
+texttt: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 5,
+},
+texttt2: {
+  fontSize: 15,
+  fontWeight: '300',
+  marginBottom: 20,
 },
 textcont: {
   fontSize: 18,
@@ -315,112 +320,14 @@ textcont: {
   textAlign: "center",
 },
 PreCont: {
-  margin: 40,
   backgroundColor: "#66E86B",
-  height: 50,
-  width: 230,
+  height: 40,
+  width: 200,
   borderRadius: 20,
-  padding: 10,
+  textAlign: 'center',
+  justifyContent: 'center',
 },
 });
 export default ThongTinUser;
-  
-//   return (
-//     <View style={styles.container}>
-//       {/* Modal */}
-//       {/* <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
-//         <View style={styles.modalButtonContainer}>
-//           <TouchableOpacity style={styles.modalButton} onPress={handleConfirm}>
-//             <Text style={styles.modalButtonText}>Xem ảnh đại diện</Text>
-//           </TouchableOpacity>
 
-//           <TouchableOpacity style={styles.modalButton}>
-//           <input type="file" onChange={handleInputChange} style={styles.chooseimg}/>
-//             <Text style={styles.modalButtonText}>Chọn ảnh</Text>
-//           </TouchableOpacity>
-//           {uploadedImageUrl && (
-//               <View style={styles.uploadedImage} >
-//                 <Image source={{ uri: uploadedImageUrl }} style={styles.uploadedImage2} />
-//               </View>
-//             )}
-
-//           <TouchableOpacity onPress={handleClick} style={styles.modalButton}>
-//            <Text style={styles.modalButtonText}>Upload</Text>
-//           </TouchableOpacity>
-//           <View style={styles.anhdaidien}>
-//           {
-//             imgUrl.map((url, index) => (
-//               <Image key={index} source={{ uri: url }} style={styles.iconCircle}/> // hình viền tròn
-//             ))
-//           }
-//           </View>
-
-//         </View>
-//       </Modal> */}
-
-//       {/* Footer */}
-//       <View style={styles.footer}>
-
-//       </View>
-
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//     container: {
-//       flex: 1,
-//     },
-//     // Modal
-//     modalButtonContainer: {
-//       flexDirection: 'column',
-//     },
-//     modalButton: {
-//       backgroundColor: '#007bff',
-//       paddingVertical: 10,
-//       paddingHorizontal: 20,
-//       borderRadius: 50,
-//       marginVertical: 5,
-//       alignItems: 'center',
-//     },
-//     modalButtonText: {
-//       color: '#fff',
-//       fontSize: 16,
-//       fontWeight: 'bold',
-//       textAlign: 'center', // Canh giữa văn bản
-//     },
-//     // footer
-//     footer: {
-//       flex: 1,
-//     },
-//     uploadimg: {
-//       alignItems: 'center',
-//       justifyContent: 'center',
-//     },
-//     chooseimg: {
-//       width: "27%",
-//       height: 25,
-//       borderRadius: 20,
-//       backgroundColor: '#ccc',
-//     },
-//     uploadButton: {
-//       backgroundColor: '#007bff',
-//       borderRadius: 5,
-//       padding: 10,
-//       marginBottom: 10,
-//     },
-//     uploadText: {
-//       color: '#fff',
-//       fontWeight: 'bold',
-//     },
-//     uploadedImage: {
-//       alignItems: 'center',
-//       justifyContent: 'center',
-//     },
-//     uploadedImage2: {
-//       width: 200,
-//       height: 200,
-//     },
-// });
-// export default ThongTinUser;
 

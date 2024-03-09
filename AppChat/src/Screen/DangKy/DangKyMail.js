@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   view1: {
     flexDirection: "row",
     backgroundColor: "#66E86B",
-    marginTop: 30,
+    //marginTop: 30,
   },
   TaoTK: {
     marginLeft: 10,
