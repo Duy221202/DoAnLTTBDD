@@ -37,32 +37,6 @@ const DanhBa1 = () => {
       // }
   };
 
-  const MenuItem = ({ icon, text, routeName }) => {
-    const isSelected = selectedMenuItem === routeName;
-    const handlePress = () => {
-      navigation.navigate(routeName); // Điều hướng đến trang tương ứng
-      // Sử dụng hàm callback của navigate để cập nhật trạng thái selectedMenuItem sau khi điều hướng đã hoàn tất
-      navigation.addListener("transitionEnd", () => {
-        setSelectedMenuItem(routeName);
-      });
-    };
-
-    return (
-      <Pressable
-        style={styles.menuItem}
-        onPress={handlePress}
-      >
-        <Icon
-          name={icon}
-          size={30}
-          color={isSelected || routeName === "DanhBa1" ? "blue" : "#66E86B"} // Giữ màu xanh cho tab "Danh bạ"
-        />
-        {/* Giữ màu xanh cho tab "Danh bạ" (DanhBa1) và tab được chọn */}
-        <Text style={{ color: isSelected || routeName === "DanhBa1" ? "blue" : "#66E86B" }}>{text}</Text>
-      </Pressable>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -492,35 +466,6 @@ const DanhBa1 = () => {
         )}
       </View>
 
-      {/* <View style={styles.footer}>
-        <View style={styles.menuContainer}>
-          <MenuItem
-            icon="chatbubbles-outline"
-            text="Tin nhắn"
-            routeName="TinNhan" // Thay bằng route name của màn hình Tin nhắn
-          />
-          <MenuItem
-            icon="person-outline"
-            text="Danh bạ"
-            routeName="DanhBa1"
-          />
-          <MenuItem
-            icon="apps"
-            text="Khám phá"
-            routeName="KhamPha"
-          />
-          <MenuItem
-            icon="book-outline"
-            text="Nhật ký"
-            routeName="NhatKy"
-          />
-          <MenuItem
-            icon="person-circle-outline"
-            text="Cá nhân"
-            routeName="CaNhan"
-          />
-        </View>
-      </View> */}
     </View>
   );
 };

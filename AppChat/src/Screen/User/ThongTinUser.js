@@ -44,7 +44,7 @@ function ThongTinUser() {
     }
   };
 
-  // Cập nhật ảnh đại diện
+  // Cập nhật ảnh đại diện   
   const handleUpdatePhoto = async () => {
     try {
       // Chọn ảnh mới từ thư viện ảnh trên thiết bị
@@ -175,6 +175,11 @@ return (
 
        {/* Body */}
        <View style={styles.body}>
+
+        {/* <TouchableOpacity onPress={handleUpdatePhoto} style={styles.addImage}>
+          <Text style={styles.addImageText}>Thêm ảnh nềnn</Text>
+        </TouchableOpacity> */}
+
          <View style={styles.cutLine}></View>
 
          <View style={styles.avatarContainer}>
@@ -237,6 +242,18 @@ icon: {
 body: {
   flex: 1,
   alignItems: "center",
+},
+addImage: {
+  position: "absolute",
+  top: "5%",
+  alignSelf: "center",
+  width: "100%",
+  height: "30%",
+},
+addImageText: {
+  color: "blue",
+  fontSize: 16,
+  fontWeight: "bold",
 },
 cutLine: {
   width: "100%",
