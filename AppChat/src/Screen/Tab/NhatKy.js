@@ -14,49 +14,6 @@ import {
 
 const NhatKy = () => {
   const navigation = useNavigation();
-  const [selectedMenuItem, setSelectedMenuItem] = useState("NhatKy");
-
-  // const route = useRoute();
-  // const name = route.params.name;
-
-  // Hàm để cập nhật trạng thái khi chuyển đổi giữa các tab menu
-  const handleMenuChange = (menuItem) => {
-    if (selectedMenuItem !== menuItem) {
-      setSelectedMenuItem(menuItem); // Cập nhật trạng thái trước khi chuyển trang
-      navigation.navigate(menuItem);
-    }
-  };
-
-  // Component MenuItem
-  const MenuItem = ({ icon, text, routeName }) => {
-    const isSelected = selectedMenuItem === routeName;
-
-    // const handlePress = () => {
-    //   handleMenuChange(routeName); // Cập nhật trạng thái khi chuyển trang
-    // };
-    const handlePress = () => {
-        navigation.navigate(routeName); // Điều hướng đến trang tương ứng
-    
-        // Sử dụng hàm callback của navigate để cập nhật trạng thái selectedMenuItem sau khi điều hướng đã hoàn tất
-        navigation.addListener('transitionEnd', () => {
-          setSelectedMenuItem(routeName);
-        });
-    };
-
-    return (
-      <Pressable
-        style={styles.menuItem}
-        onPress={handlePress}
-      >
-        <Icon
-          name={icon}
-          size={30}
-          color={isSelected ? "blue" : "#66E86B"}
-        />
-        <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
-      </Pressable>
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -92,35 +49,9 @@ const NhatKy = () => {
       </View>
       
       {/* Footer */}
-      {/* <View style={styles.footer}>
-        <View style={styles.menuContainer}>
-          <MenuItem
-            icon="chatbubbles-outline"
-            text="Tin nhắn"
-            routeName="TinNhan" // Thay bằng route name của màn hình Tin nhắn
-          />
-          <MenuItem
-            icon="person-outline"
-            text="Danh bạ"
-            routeName="DanhBa1" // Thay bằng route name của màn hình danh bạ
-          />
-          <MenuItem
-            icon="apps"
-            text="Khám phá"
-            routeName="KhamPha" // Thay bằng route name của màn hình khám phá
-          />
-          <MenuItem
-            icon="book-outline"
-            text="Nhật ký"
-            routeName="NhatKy" // Thay bằng route name của màn hình nhật ký
-          />
-          <MenuItem
-            icon="person-circle-outline"
-            text="Cá nhân"
-            routeName="CaNhan" // Thay bằng route name của màn hình cá nhân
-          />
-        </View>
-      </View> */}
+      <View style={styles.footer}>
+        
+      </View>
     </View>
   );
 };
@@ -129,6 +60,7 @@ const NhatKy = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      marginTop: 35,
     },
     header: {
       flexDirection: "row",
@@ -136,7 +68,6 @@ const NhatKy = () => {
       backgroundColor: "#66E86B",
       paddingVertical: 20,
       justifyContent: 'space-between',
-      //marginTop: 30,
     },
     iconContainer: {
       marginLeft: 5,
@@ -179,17 +110,6 @@ const NhatKy = () => {
       justifyContent: "flex-end",
       alignItems: "center",
       marginBottom: 20,
-    },
-    menuContainer: {
-      width: "100%",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingHorizontal: 10,
-    },
-    menuItem: {
-      alignItems: "center",
-      flex: 1,
     },
     icon: {
       marginLeft: 10,

@@ -14,61 +14,6 @@ import {
 
 const TinNhan = () => {
   const navigation = useNavigation();
-  const [selectedMenuItem, setSelectedMenuItem] = useState("TinNhan"); // Khởi tạo trạng thái ban đầu là TinNhan
-  
-  // const route = useRoute();
-  // const name = route.params.name; 
-
-  // Component MenuItem
-  const MenuItem = ({ icon, text, routeName }) => {
-    const isSelected = selectedMenuItem === routeName; // Kiểm tra xem có phải routeName đang được chọn hay không
-    const handlePress = () => {
-      if (routeName) {
-        navigation.navigate(routeName, {}, {
-          // Hàm callback được gọi sau khi navigation đã hoàn tất
-          // Nơi bạn cập nhật trạng thái selectedMenuItem
-          callback: () => handleMenuChange(routeName)
-        });
-      } else {
-        handleMenuChange(icon);
-      }
-    };
-
-    return (
-      <Pressable
-        style={styles.menuItem}
-        onPress={handlePress}
-      >
-        <Icon
-          name={icon}
-          size={30}
-          color={isSelected ? "blue" : "#66E86B"}
-        />
-        <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
-      </Pressable>
-    );
-  };
-
-  // const MenuItem = ({ icon, text, routeName, navigation, name }) => {
-  //   const isSelected = selectedMenuItem === routeName;
-  //   const handlePress = () => {
-  //     navigation.navigate(routeName, { name: name });
-  //   };
-  
-  //   return (
-  //     <Pressable
-  //       style={styles.menuItem}
-  //       onPress={handlePress}
-  //     >
-  //       <Icon
-  //         name={icon}
-  //         size={30}
-  //         color={isSelected ? "blue" : "#66E86B"}
-  //       />
-  //       <Text style={{ color: isSelected ? "blue" : "#66E86B" }}>{text}</Text>
-  //     </Pressable>
-  //   );
-  // };
 
   return (
     <View style={styles.container}>
@@ -88,7 +33,7 @@ const TinNhan = () => {
       <View style={styles.body}>
         <Pressable
           style={styles.userContainer}
-          onPress={() => navigation.navigate('UserProfile')}
+          onPress={() => navigation.navigate('DoanChat')}
         >
           <Icon
             name="person-circle-outline"
@@ -121,41 +66,9 @@ const TinNhan = () => {
       </View>
       
       {/* Footer */}
-      {/* <View style={styles.footer}>
-        <View style={styles.menuContainer}>
-          <MenuItem
-            icon="chatbubbles-outline"
-            text="Tin nhắn"
-            routeName="TinNhan" // Thay bằng route name của màn hình Tin nhắn
-            navigation={navigation}
-          />
-          <MenuItem
-            icon="person-outline"
-            text="Danh bạ"
-            routeName="DanhBa1" // Thay bằng route name của màn hình danh bạ
-            navigation={navigation}
-          />
-          <MenuItem
-            icon="apps"
-            text="Khám phá"
-            routeName="KhamPha" // Thay bằng route name của màn hình khám phá
-            navigation={navigation}
-          />
-          <MenuItem
-            icon="book-outline"
-            text="Nhật ký"
-            routeName="NhatKy" // Thay bằng route name của màn hình nhật ký
-            navigation={navigation}
-          />
-          <MenuItem
-            icon="person-circle-outline"
-            text="Cá nhân"
-            routeName="CaNhan" // Thay bằng route name của màn hình cá nhân
-            navigation={navigation}
-            //name={name} // Truyền giá trị name vào MenuItem thông qua props
-          />
-        </View>
-      </View> */}
+      <View style={styles.footer}>
+        
+      </View>
     </View>
   );
 };
@@ -164,6 +77,7 @@ const TinNhan = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 35,
   },
   header: {
     flexDirection: "row",
@@ -171,7 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#66E86B",
     paddingVertical: 20,
     justifyContent: 'space-between',
-    //marginTop: 30, // canh chỉnh phù hợp với android
   },
   iconContainer: {
     marginLeft: 5,
@@ -214,17 +127,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     marginBottom: 20,
-  },
-  menuContainer: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
-  menuItem: {
-    alignItems: "center",
-    flex: 1,
   },
   icon: {
     marginLeft: 10,

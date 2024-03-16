@@ -119,6 +119,7 @@ const Login2 = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 35,
   },
   toastContainer: {
     position: 'absolute',
@@ -130,7 +131,6 @@ const styles = StyleSheet.create({
   view1: {
     flexDirection: "row",
     backgroundColor: "#66E86B",
-    //marginTop: 30,
   },
   view2: {
     backgroundColor: "#D9D9D9",

@@ -155,6 +155,7 @@ return (
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      marginTop: 35,
     },
     view1: {
       flexDirection: "row",
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     footer: {
       alignItems: "center",
       flex: 1,
-      justifyContent: "flex-end", // Di chuyển nút logout xuống dưới cùng
+      justifyContent: "flex-end", 
     },
     logoutButton: {
       flexDirection: 'row',

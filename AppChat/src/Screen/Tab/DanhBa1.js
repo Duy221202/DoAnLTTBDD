@@ -18,9 +18,6 @@ const DanhBa1 = () => {
   const [selectedMenuItem, setSelectedMenuItem] = useState("Friends");
   const [selectedButton, setSelectedButton] = useState('All');
 
-  // const route = useRoute();
-  // const name = route.params.name;
-
   useEffect(() => {
     // Set mặc định là tab "Bạn bè" được chọn khi component được render lần đầu
     setSelectedMenuItem("Friends");
@@ -473,6 +470,7 @@ const DanhBa1 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 35,
   },
   header: {
     flexDirection: "row",
@@ -480,7 +478,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#66E86B",
     paddingVertical: 20,
     justifyContent: 'space-between',
-    //marginTop: 30,
   },
   iconContainer: {
     marginLeft: 5,
@@ -497,8 +494,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   bodyContainer: {
-    flex: 1, // Chia tỷ lệ dẫn đến footer không bị đẩy lên
-    marginBottom: 50, // Giữ một khoảng cố định ở dưới cho footer
+    flex: 1, 
+    marginBottom: 50, 
   },
   body: {
     flex: 1,
@@ -567,7 +564,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 25,
-    marginRight: 15, // Thêm margin để tạo khoảng cách giữa hai nút
+    marginRight: 15, 
   },
   bottomButtonText: {
     fontSize: 16,
@@ -575,7 +572,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   selectedButton: {
-    backgroundColor: 'gray', // Đổi màu nền khi button được chọn
+    backgroundColor: 'gray',
   },
   //
   banbe3: {
@@ -640,8 +637,8 @@ const styles = StyleSheet.create({
   noibat: {
     flexDirection: 'row',
     marginTop: 10,
-    justifyContent: 'flex-start', // Các icon nằm từ bên trái qua
-    alignItems: 'center', // Canh chỉnh các icon theo trục Y
+    justifyContent: 'flex-start', 
+    alignItems: 'center', 
     marginVertical: 5, // Khoảng cách dọc giữa các icon
     paddingHorizontal: 25, // Khoảng cách ngang giữa biên và icon
   },
@@ -652,7 +649,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconnoibat: {
-    alignItems: 'center', // Canh chỉnh các icon theo trục Y
+    alignItems: 'center', 
     marginRight: 20,
   },
   nhomdtg: {

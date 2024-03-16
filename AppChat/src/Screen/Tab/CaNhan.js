@@ -204,6 +204,7 @@ const CaNhan = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      marginTop: 35,
     },
     header: {
       flexDirection: "row",
@@ -211,7 +212,6 @@ const CaNhan = () => {
       backgroundColor: "#66E86B",
       paddingVertical: 20,
       justifyContent: 'space-between',
-      //marginTop: 30,
     },
     iconContainer: {
       marginLeft: 5,

@@ -7,13 +7,10 @@ const Welcome = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('vi');
 
   const handleLogin = () => {
-    // Handle login navigation
     navigation.navigate('Login2');
   };
 
   const handleRegister = () => {
-    // Handle registration navigation
-    //navigation.navigate('Dangky');
     navigation.navigate('DangKyMail');
   };
 
@@ -56,12 +53,9 @@ const Welcome = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 35,
   },
   welcomeContainer: {
-    // alignItems: "center",
-    // paddingHorizontal: 10,
-    // justifyContent: "center",
-    // marginTop: 30, // Canh chỉnh phù hợp với android
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -102,13 +96,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   footer: {
-    // flexDirection: 'row',
-    // marginTop: 70,
-    // justifyContent: 'space-around',
     flexDirection: 'row',
-    marginTop: 'auto', // Đặt margin top tự động điều chỉnh dựa trên phần còn lại của không gian trống
+    marginTop: 'auto', 
     justifyContent: 'space-around',
-    marginBottom: 20, // Để tránh việc footer bị chạm vào bottom edge
+    marginBottom: 20, 
   },
   footerText: {
     fontSize: 18,

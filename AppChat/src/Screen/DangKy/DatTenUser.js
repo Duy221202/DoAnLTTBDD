@@ -4,13 +4,13 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { auth } from '../../../config/firebase';
-import { useRoute } from '@react-navigation/native'; // Import useRoute
+import { useRoute } from '@react-navigation/native'; 
 
 export default function DatTenUser({ navigation}) {
   const [name, setName] = useState('');
   const db = getFirestore();
   const route = useRoute(); // Sử dụng useRoute để lấy route params
-  const { email, pass } = route.params;
+  const { email, pass} = route.params; 
   
   const onHandleSignup = () => {
     if (name !== '') {
@@ -20,13 +20,9 @@ export default function DatTenUser({ navigation}) {
         // Lưu tên người dùng vào Firestore
         setDoc(doc(db, "users", auth.currentUser.uid), {
           name: name,
+          UID: auth.currentUser.uid, // Thêm UID vào tài liệu người dùng
           userId: email // Sử dụng email từ params
         }).then(() => {
-          // alert(
-          //   'Signup success',
-          //   'You have signed up successfully!',
-          //   [{ text: 'OK'}]
-          // );
           navigation.navigate('Profile');
         }).catch((error) => {
           console.log("Error adding document: ", error);
@@ -101,6 +97,7 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 35,
   },
   view1: {
     flexDirection: "row",

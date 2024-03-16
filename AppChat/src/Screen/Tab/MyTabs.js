@@ -3,7 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from "react-native-vector-icons/Ionicons";
 
 import TinNhan from "./TinNhan";
-import DanhBa1 from "./DanhBa1";
+import DanhBa from "./DanhBa";
+//import DanhBa1 from "./DanhBa1";
 import KhamPha from "./KhamPha";
 import NhatKy from "./NhatKy";
 import CaNhan from "./CaNhan";
@@ -39,7 +40,8 @@ function MyTabs({ route }) {
       />
       <Tab.Screen
         name="Danh Bạ"
-        component={DanhBa1}
+        //component={DanhBa1}
+        component={DanhBa}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (

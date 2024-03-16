@@ -33,7 +33,6 @@ export default function DangKyMail({ navigation }) {
           console.log('Đăng ký thành công');
           showToast('Đăng ký thành công', 'success');
           setTimeout(() => {
-            // navigation.navigate("Dangky"); // Thực hiện điều hướng sau 3 giây
             navigation.navigate("DatTenUser", { email: email, pass: pass });
           }, 3000);
         })
@@ -130,6 +129,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    marginTop: 35,
   },
   toastContainer: {
     position: 'absolute',
@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
   view1: {
     flexDirection: "row",
     backgroundColor: "#66E86B",
-    //marginTop: 30,
   },
   TaoTK: {
     marginLeft: 10,
