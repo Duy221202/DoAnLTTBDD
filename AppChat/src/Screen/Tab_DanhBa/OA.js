@@ -1,7 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+
+import {
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 
 const OA = () => {
+  const navigation = useNavigation();
+  
   return (
     <View style={styles.body}>
         <View style={styles.banbe}>

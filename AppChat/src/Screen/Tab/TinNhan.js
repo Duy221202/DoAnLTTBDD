@@ -10,27 +10,74 @@ import {
   Pressable,
   Image,
   TextInput,
+  ScrollView, 
+  SafeAreaView,
+  FlatList
 } from "react-native";
 
 const TinNhan = () => {
   const navigation = useNavigation();
+  // const [input, setInput] = useState("");
+  // const handleInputChange = (text) => {
+  //   setInput(text);
+  // };
+  // const [state, SetState] = useState();
+  // const truncateName = (name, maxLength) => {
+  //   if (name.length > maxLength) {
+  //     return name.substring(0, maxLength) + '...';
+  //   } else {
+  //     return name;
+  //   }
+  // };
+
+  // const renderItem = ({ item }) => (
+  //   <View style={styles.itemContainer}>
+  //     <Pressable>
+  //       <Image style={styles.image} source={item.img} />
+  //       <Text style={styles.text}>{truncateName(item.name, 9)}</Text>
+  //     </Pressable>
+  //   </View>
+  // );
+
+  // useEffect(() => {
+  //   navigation.navigate('Chat_Quy');
+  // }, []); // Empty dependency array ensures this effect only runs once after initial render
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <SafeAreaView>
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Icon name="search" size={25} color="white" style={styles.icon} />
-          <TextInput style={styles.textTK} placeholder="Tìm kiếm"></TextInput>
-        </View>
-        <View style={styles.iconContainer2}>
-          <Icon name="qr-code" size={25} color="white" style={styles.icon} />
-          <Icon name="add" size={25} color="white" style={styles.icon} />
-        </View>
+      <View style={styles.searchContainer}>
+          <Pressable >
+            <Icon name="search" size={20} color="white" />
+          </Pressable>
+
+          <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_BanBe")}>
+            <Text style={styles.textSearch}>Tìm kiếm</Text>
+          </Pressable>
+          
+          <Icon name="qr-code" size={25} color="white" />
+          <Icon name="add" size={30} color="white" style={styles.icon} />
+      </View>   
+
+      <View>
+        <Pressable style={styles.itemuser} onPress={() => navigation.navigate('Chat_Quy')}>
+          <Text style={styles.textnvd}>Nhấn vào đây</Text>
+        </Pressable>
       </View>
+
+      {/* <View>
+      <FlatList
+        data={state}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={3}
+        // contentContainerStyle={{ flexGrow: 1 }}
+      />
+      </View> */}
       
-      {/* Body */}
-      <View style={styles.body}>
+      
+      {/* <View style={styles.body}>
         <Pressable
           style={styles.userContainer}
           onPress={() => navigation.navigate('DoanChat')}
@@ -50,7 +97,7 @@ const TinNhan = () => {
         </Pressable>
         <Pressable
           style={styles.userContainer}
-          onPress={() => navigation.navigate('UserProfile')}
+          onPress={() => navigation.navigate('Chat')}
         >
           <Icon
             name="person-circle-outline"
@@ -65,11 +112,12 @@ const TinNhan = () => {
         </Pressable>
       </View>
       
-      {/* Footer */}
+      
       <View style={styles.footer}>
         
-      </View>
-    </View>
+      </View> */}
+      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -79,30 +127,27 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 35,
   },
-  header: {
+  searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#66E86B",
-    paddingVertical: 20,
-    justifyContent: 'space-between',
+    backgroundColor: "#006AF5",
+    padding: 9,
+    height: 48,
+    width: '100%',
   },
-  iconContainer: {
-    marginLeft: 5,
-    flexDirection: 'row',
+  searchInput: {   
+    flex: 1,
+    justifyContent:"center",
+    height:48,
+    marginLeft: 10,      
   },
-  textTK: {
-    marginLeft: 5,
-    fontSize: 18,
-    color: 'white',
-    width: 250,
-  },
-  iconContainer2: {
-    marginRight: 5,
-    flexDirection: 'row',
+  textSearch:{
+    color:"white",
+    fontWeight:'500'
   },
   body: {
-    flex: 1,
     paddingHorizontal: 10,
+    //paddingVertical: 10,
   },
   userContainer: {
     flexDirection: 'row',
@@ -131,6 +176,16 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 10,
   },
+  textnvd: {
+    alignSelf: 'center',
+    textAlign: 'center',
+    backgroundColor: "#66E86B",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 50,
+    borderRadius: 5,
+    width: '40%',
+  }
 });
 
 export default TinNhan;

@@ -10,23 +10,26 @@ import {
   Pressable,
   Image,
   TextInput,
+  ScrollView, 
+  SafeAreaView,
 } from "react-native";
 
 const NhatKy = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <SafeAreaView>
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Icon name="search" size={25} color="white" style={styles.icon} />
-          <TextInput style={styles.textTK} placeholder="Tìm kiếm"></TextInput>
-        </View>
-        <View style={styles.iconContainer2}>
+      <View style={styles.searchContainer}>
+          <Pressable >
+          <Icon name="search" size={20} color="white" />
+          </Pressable>
+          <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_BanBe")}>
+          <Text style={styles.textSearch}>Tìm kiếm</Text>
+          </Pressable>
           <Icon name="image-outline" size={25} color="white" style={styles.icon} />
           <Icon name="notifications-outline" size={25} color="white" style={styles.icon} />
-        </View>
       </View>
       
       {/* Body */}
@@ -52,7 +55,8 @@ const NhatKy = () => {
       <View style={styles.footer}>
         
       </View>
-    </View>
+      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -62,29 +66,25 @@ const NhatKy = () => {
       flex: 1,
       marginTop: 35,
     },
-    header: {
+    searchContainer: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#66E86B",
-      paddingVertical: 20,
-      justifyContent: 'space-between',
+      backgroundColor: "#006AF5",
+      padding: 9,
+      height: 48,
+      width: '100%',
     },
-    iconContainer: {
-      marginLeft: 5,
-      flexDirection: 'row',
+    searchInput: {   
+      flex: 1,
+      justifyContent:"center",
+      height:48,
+      marginLeft: 10,      
     },
-    textTK: {
-      marginLeft: 5,
-      fontSize: 18,
-      color: 'white',
-      width: 250,
-    },
-    iconContainer2: {
-      marginRight: 5,
-      flexDirection: 'row',
+    textSearch:{
+      color:"white",
+      fontWeight:'500'
     },
     body: {
-      flex: 1,
       paddingHorizontal: 10,
     },
     userContainer: {

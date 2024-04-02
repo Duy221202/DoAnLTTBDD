@@ -10,26 +10,29 @@ import {
   Pressable,
   Image,
   TextInput,
+  ScrollView, 
+  SafeAreaView,
 } from "react-native";
 
 const KhamPha = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <SafeAreaView>
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Icon name="search" size={25} color="white" style={styles.icon} />
-          <TextInput style={styles.textTK} placeholder="Tìm kiếm"></TextInput>
-        </View>
-        <View style={styles.iconContainer2}>
-          <Icon name="qr-code" size={25} color="white" style={styles.icon} />
-        </View>
+      <View style={styles.searchContainer}>
+          <Pressable >
+          <Icon name="search" size={20} color="white" />
+          </Pressable>
+          <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_BanBe")}>
+          <Text style={styles.textSearch}>Tìm kiếm</Text>
+          </Pressable>
+          <Icon name="qr-code" size={25} color="white" />
       </View>
       
       {/* Body */}
-      <View style={styles.body}>
+      <SafeAreaView style={styles.body}>
         <Pressable
           style={styles.userContainer}
           onPress={() => navigation.navigate('UserProfile')}
@@ -45,13 +48,14 @@ const KhamPha = () => {
             <Text style={styles.userMessage}>123</Text>
           </View>
         </Pressable>
-      </View>
+      </SafeAreaView>
       
       {/* Footer */}
       <View style={styles.footer}>
         
       </View>
-    </View>
+      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -61,29 +65,25 @@ const KhamPha = () => {
       flex: 1,
       marginTop: 35,
     },
-    header: {
+    searchContainer: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#66E86B",
-      paddingVertical: 20,
-      justifyContent: 'space-between',
+      backgroundColor: "#006AF5",
+      padding: 9,
+      height: 48,
+      width: '100%',
     },
-    iconContainer: {
-      marginLeft: 5,
-      flexDirection: 'row',
+    searchInput: {   
+      flex: 1,
+      justifyContent:"center",
+      height:48,
+      marginLeft: 10,      
     },
-    textTK: {
-      marginLeft: 5,
-      fontSize: 18,
-      color: 'white',
-      width: 250,
-    },
-    iconContainer2: {
-      marginRight: 15,
-      flexDirection: 'row',
+    textSearch:{
+      color:"white",
+      fontWeight:'500'
     },
     body: {
-      flex: 1,
       paddingHorizontal: 10,
     },
     userContainer: {

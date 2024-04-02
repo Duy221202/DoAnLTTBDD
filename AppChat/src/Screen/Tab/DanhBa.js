@@ -16,13 +16,14 @@ const DanhBa = () => {
       <SafeAreaView>
         <View style={styles.searchContainer}>
           <Pressable >
-          <Icon name="search" size={20} color="white" />
+            <Icon name="search" size={20} color="white" />
           </Pressable>
+
           <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_BanBe")}>
-          <Text style={styles.textSearch}>Tìm kiếm</Text>
+            <Text style={styles.textSearch}>Tìm kiếm</Text>
           </Pressable>
-          <Icon name="qr-code" size={24} color="white" />
-          <Icon name="add" size={30} color="white" />
+          
+          <Icon name="person-add-outline" size={25} color="white" />
         </View>   
 
         <Tab.Navigator>
@@ -60,19 +61,6 @@ const styles = StyleSheet.create({
   textSearch:{
     color:"white",
     fontWeight:'500'
-  },
-  itemContainer: {
-    marginTop: 20,
-    flex: 1,
-    margin: 20,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    resizeMode: 'cover',
-  },
-  text: {
-    marginTop: 10,
   },
 });
 

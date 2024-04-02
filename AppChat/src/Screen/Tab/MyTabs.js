@@ -4,16 +4,14 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import TinNhan from "./TinNhan";
 import DanhBa from "./DanhBa";
-//import DanhBa1 from "./DanhBa1";
+import Chat from "../Chat/Chat";
 import KhamPha from "./KhamPha";
 import NhatKy from "./NhatKy";
 import CaNhan from "./CaNhan";
 import Profile from "./Profile";
 
 const Tab = createBottomTabNavigator();
-function MyTabs({ route }) {
-  // const name = route.params?.name; // Kiểm tra và truy cập name từ route params
-  // const img = route.params?.img;
+function MyTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -26,7 +24,8 @@ function MyTabs({ route }) {
     >
       <Tab.Screen
         name="Tin Nhắn"
-        component={TinNhan}
+        //component={TinNhan}
+        component={Chat}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
