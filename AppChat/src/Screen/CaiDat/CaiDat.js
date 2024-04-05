@@ -155,11 +155,11 @@ return (
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 35,
+      marginTop: 32,
     },
     view1: {
       flexDirection: "row",
-      backgroundColor: "#66E86B",
+      backgroundColor: "#418df8",
     },
     caidat: {
       marginLeft: 10,
@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
       marginTop: 15,
       height: 20,
       width: 20,
+      marginLeft: 5,
     },
     // Body
     body: {

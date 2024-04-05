@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable, SafeAreaView } from 'react-native';
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Ionicons";
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
@@ -10,6 +10,9 @@ export default function DangKyMail({ navigation }) {
   const [pass, setPass] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [confirmPass, setConfirmPass] = useState('');
+  const [sdt, setSdt] = useState('');
+  const [otp, setOtp] = useState('');
+  const [userInputOTP, setUserInputOTP] = useState('');
 
   const handlePasswordVisibility = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -25,6 +28,23 @@ export default function DangKyMail({ navigation }) {
       // Kiểm tra xem mật khẩu và nhập lại mật khẩu có trùng khớp không
       if (pass !== confirmPass) {
         showToast('Mật khẩu không trùng khớp', 'error');
+        return;
+      }
+      // Kiểm tra độ dài của mật khẩu
+      if (pass.length < 6 || pass.length > 30) {
+        showToast('Mật khẩu phải có từ 6 đến 30 ký tự', 'error');
+        return;
+      }
+      if (!/^[A-Z]/.test(pass)) {
+        showToast('Mật khẩu phải bắt đầu bằng chữ hoa', 'error');
+        return;
+      }
+      if (/\s/.test(pass)) {
+        showToast('Mật khẩu không được chứa khoảng trắng', 'error');
+        return;
+      }
+      if (!/^[A-Za-z0-9_@!$%^&*()#]+$/.test(pass)) {
+        showToast('Mật khẩu chứa các ký tự chữ cái, số và ký tự đặc biệt', 'error');
         return;
       }
       
@@ -52,6 +72,49 @@ export default function DangKyMail({ navigation }) {
     }
   };
 
+  // // mới
+  // const onHandleSignup = () => {
+  //   if (email !== '' && pass !== '') {
+  //     if (!email.endsWith('@gmail.com')) {
+  //       showToast('Địa chỉ email phải có đuôi @gmail.com', 'error');
+  //       return;
+  //     }
+  //     if (pass !== confirmPass) {
+  //       showToast('Mật khẩu không trùng khớp', 'error');
+  //       return;
+  //     }
+      
+  //     createUserWithEmailAndPassword(auth, email, pass)
+  //       .then((userCredential) => {
+  //         const user = userCredential.user;
+  //         //sendEmailVerification(auth.currentUser) // gửi mail xác nhận 
+  //         generateOTP();
+  //       })
+  //       .catch((err) => {
+  //         console.error('Đăng ký thất bại:', err.message);
+  //         showToast(`Đăng ký thất bại: ${err.message}`, 'error');
+  //       });
+  //   } else {
+  //     showToast('Vui lòng điền đầy đủ email và mật khẩu', 'error');
+  //   }
+  // };
+
+  // const verifyOTP = () => {
+  //   if (userInputOTP === otp) {
+  //     navigation.navigate("DatTenUser", { email: email, pass: pass });
+  //   } else {
+  //     showToast('Mã OTP không đúng', 'error');
+  //   }
+  // };  
+
+  // const generateOTP = () => {
+  //   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  //   setOtp(otp);
+  //   console.log('Mã OTP đã được gửi:', otp); // Log ra mã OTP
+  //   // Gửi OTP đến email
+  //   // Code gửi email ở đây
+  //   showToast('Mã OTP đã được gửi đến email của bạn', 'success');
+  // };
   const showToast = (message, type) => {
     Toast.show({
       type: type,
@@ -65,6 +128,7 @@ export default function DangKyMail({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <SafeAreaView>
       <View style={styles.toastContainer}>
         <Toast ref={(ref) => Toast.setRef(ref)} />
       </View>
@@ -114,6 +178,14 @@ export default function DangKyMail({ navigation }) {
           onChangeText={(text) => setConfirmPass(text)}
           secureTextEntry={secureTextEntry}
         />
+        {/* <TextInput
+          style={styles.textInsdt}
+          placeholder="Số điện thoại"
+          //autoCapitalize="none"
+          //keyboardType="email-address"
+          //value={email}
+          //onChangeText={(text) => setEmail(text)}
+        /> */}
 
       </View>
 
@@ -122,13 +194,28 @@ export default function DangKyMail({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.view5}>
-        <Text style={styles.textdieukhoan}>
           <Text>Đã có tài khoản? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Login2")}>
-            <Text style={[styles.textdieukhoan, styles.blueText]}>Đăng nhập</Text>
+            {/* <Text style={[styles.textdieukhoan, styles.blueText]}>Đăng nhập</Text> */}
+            <Text style={styles.blueText}>Đăng nhập</Text>
           </TouchableOpacity>
-        </Text>
       </View>
+
+      {/* {otp !== '' && (
+        <View style={styles.otpContainer}>
+          <TextInput
+            style={styles.textInsdt}
+            placeholder="Nhập mã OTP"
+            keyboardType="numeric"
+            value={userInputOTP}
+            onChangeText={(text) => setUserInputOTP(text)}
+          />
+          <TouchableOpacity style={styles.view4} onPress={verifyOTP}>
+            <Text style={styles.textcont}>Xác thực OTP</Text>
+          </TouchableOpacity>
+        </View>
+      )} */}
+    </SafeAreaView>
     </View>
   );
 }
@@ -139,7 +226,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    marginTop: 35,
+    marginTop: 32,
   },
   toastContainer: {
     position: 'absolute',
@@ -150,7 +237,7 @@ const styles = StyleSheet.create({
   },
   view1: {
     flexDirection: "row",
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
   },
   TaoTK: {
     marginLeft: 10,
@@ -193,7 +280,7 @@ const styles = StyleSheet.create({
   },
   visibilityIconContainer: {
     position: 'absolute',
-    right: 30,
+    right: 38,
     top: 85,
     justifyContent: 'center',
   },
@@ -202,8 +289,8 @@ const styles = StyleSheet.create({
   },
   view4: {
     alignSelf: 'center',
-    margin: 40,
-    backgroundColor: "#66E86B",
+    marginTop: 10,
+    backgroundColor: "#418df8",
     height: 50,
     width: 230,
     borderRadius: 20,
@@ -216,18 +303,40 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   view5: {
-    position: 'absolute',
-    bottom: 0,
-    marginBottom: 20,
-    alignSelf: 'center',
-  },
-  textdieukhoan: {
-    fontSize: 18,
-    textAlign: 'center',
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
   blueText: {
     color: 'blue',
     fontWeight: '400',
+  },
+
+  // OTP
+  otpContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  otpTextInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 16,
+    width: '100%',
+  },
+  verifyButton: {
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  verifyButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

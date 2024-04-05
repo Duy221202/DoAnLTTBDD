@@ -149,7 +149,7 @@ const updatePhotoURL = async (newURL, userId) => {
 };
   
 const onHandleCont = () => {
-    alert(
+    Alert.alert(
       'Signup success',
       'You have signed up successfully!',
       [{ text: 'OK'}]
@@ -203,18 +203,19 @@ const onHandleCont = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 35,
+    marginTop: 32,
   },
   view1: {
     flexDirection: "row",
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
   },
   view2: {
     backgroundColor: "#D9D9D9",
-    alignItems: 'flex-start',
+    //alignItems: 'flex-start',
   },
   textNote: {
     fontSize: 16,
+    textAlign: 'center',
   },
   anhdaidien: {
     marginLeft: 10,
@@ -261,6 +262,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '200',
     textAlign: 'center',
+    marginTop: 15,
   },
   cont: {
     marginTop: 50,
@@ -275,7 +277,7 @@ const styles = StyleSheet.create({
   },
   PreCont: {
     margin: 40,
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
     height: 50,
     width: 230,
     borderRadius: 20,

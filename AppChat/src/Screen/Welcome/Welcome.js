@@ -12,6 +12,7 @@ const Welcome = () => {
 
   const handleRegister = () => {
     navigation.navigate('DangKyMail');
+    //navigation.navigate('DangKy');
   };
 
   const handleLanguageChange = (language) => {
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     borderRadius: 200,
   },
   button: {
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 20,

@@ -64,12 +64,12 @@ const NhatKy = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 35,
+      marginTop: 32,
     },
     searchContainer: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#006AF5",
+      backgroundColor: "#418df8",
       padding: 9,
       height: 48,
       width: '100%',

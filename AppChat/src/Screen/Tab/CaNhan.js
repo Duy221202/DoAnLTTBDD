@@ -32,8 +32,11 @@ const CaNhan = () => {
       // Fetch ảnh đại diện mới từ Firestore hoặc từ state nếu đã cập nhật
       if (auth.currentUser) {
         fetchPhotoURL(auth.currentUser.uid);
+        // fetchUserData(auth.currentUser.uid);
       }
     });
+    // Fetch dữ liệu người dùng mỗi khi trang được render lại
+    //fetchUserData();
 
     return unsubscribe;
   }, [navigation]);
@@ -50,10 +53,6 @@ const CaNhan = () => {
     } catch (error) {
       console.error("Error fetching photo URL: ", error);
     }
-  };
-
-  const handleSetting = () => {
-    navigation.navigate('CaiDat');
   };
 
   return (
@@ -210,12 +209,12 @@ const CaNhan = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 35,
+      marginTop: 32,
     },
     searchContainer: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#006AF5",
+      backgroundColor: "#418df8",
       padding: 9,
       height: 48,
       width: '100%',

@@ -119,7 +119,7 @@ const Login2 = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 35,
+    marginTop: 32,
   },
   toastContainer: {
     position: 'absolute',
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   view1: {
     flexDirection: "row",
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
   },
   view2: {
     backgroundColor: "#D9D9D9",
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     color: 'blue',
+    marginRight: 10,
   },
   view4: {
     alignItems: 'center',
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
   },
   PreLogin: {
     margin: 40,
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
     height: 50,
     width: 230,
     borderRadius: 20,

@@ -20,6 +20,10 @@ import BanBe from "./src/Screen/Tab_DanhBa/BanBe";
 import Chat from "./src/Screen/Chat/Chat";
 import Chat_fr from "./src/Screen/Chat/Chat_fr";
 
+import ThongTin from "./src/Screen/User/ThongTin";
+
+import DangKy from "./src/Screen/DangKy/DangKy";
+
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
@@ -35,14 +39,17 @@ const App = () => {
         <Stack.Screen name="CaiDat" component={CaiDat} />
         <Stack.Screen name="TimKiem_BanBe" component={TimKiem_BanBe} />
         <Stack.Screen name="LoiMoiKetBan" component={LoiMoiKetBan} />
-        {/* <Stack.Screen name="DoanChat" component={DoanChat} /> */}
+        
         <Stack.Screen name="Quenmatkhau" component={Quenmatkhau} />
         
         <Stack.Screen name="BanBe" component={BanBe} />
-        {/* <Stack.Screen name="Chat" component={Chat} /> */}
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="Chat_fr" component={Chat_fr} />
 
+        <Stack.Screen name="ThongTin" component={ThongTin} />
+
+        {/* <Stack.Screen name="DoanChat" component={DoanChat} /> */}
+        <Stack.Screen name="DangKy" component={DangKy} />
       </Stack.Navigator>
     </NavigationContainer>
   );

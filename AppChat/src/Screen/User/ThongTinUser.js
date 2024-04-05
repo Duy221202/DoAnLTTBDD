@@ -7,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
-import Modal from "react-native-modal";
+//import Modal from "react-native-modal";
 
 function ThongTinUser() {
   const navigation = useNavigation();
@@ -154,6 +154,10 @@ const onHandleNhatKy = () => {
   navigation.navigate('MyTabs');
 };
 
+const onHandleThongTin = () => {
+  navigation.navigate('ThongTin');
+};
+
 return (
   <View style={styles.container}>
 
@@ -167,9 +171,9 @@ return (
            <TouchableOpacity>
              <Icon name="time-outline" size={25} color="black" style={styles.icon} />
            </TouchableOpacity>
-           <TouchableOpacity>
+           <Pressable onPress={onHandleThongTin}>
              <Icon name="ellipsis-vertical" size={25} color="black" style={styles.icon} />
-           </TouchableOpacity>
+           </Pressable>
          </View>
        </View>
 
@@ -338,7 +342,7 @@ textcont: {
   textAlign: "center",
 },
 PreCont: {
-  backgroundColor: "#66E86B",
+  backgroundColor: "#418df8",
   height: 40,
   width: 200,
   borderRadius: 20,

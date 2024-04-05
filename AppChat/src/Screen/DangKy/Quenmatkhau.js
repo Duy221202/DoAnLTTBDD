@@ -67,11 +67,11 @@ export default function Quenmatkhau  () {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 35,
+    marginTop: 32,
   },
   view1: {
     flexDirection: "row",
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
   },
   textllmk: {
     marginLeft: 10,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   PreQMK: {
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
     height: 50,
     width: "60%",
     borderRadius: 25, 

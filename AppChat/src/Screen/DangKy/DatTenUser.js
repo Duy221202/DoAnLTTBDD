@@ -5,15 +5,28 @@ import { updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { auth } from '../../../config/firebase';
 import { useRoute } from '@react-navigation/native'; 
+import { Picker } from '@react-native-picker/picker';
 
 export default function DatTenUser({ navigation}) {
   const [name, setName] = useState('');
   const db = getFirestore();
   const route = useRoute(); // Sử dụng useRoute để lấy route params
   const { email, pass} = route.params; 
-  
+  const [gender, setGender] = useState('male');
+  const [day, setDay] = useState('1');
+  const [month, setMonth] = useState('1');
+  const [year, setYear] = useState('2000');
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
+  const years = Array.from({ length: 120 }, (_, i) => (2024 - i).toString());
+
   const onHandleSignup = () => {
     if (name !== '') {
+      // // Kiểm tra ràng buộc đặt tên
+      // if (!/^[A-Za-z][a-zA-Z]*$/.test(name)) {
+      //   Alert.alert('Tên bắt đầu bằng chữ cái và không chứa ký tự số hoặc ký tự đặc biệt.');
+      //   return;
+      // }
       updateProfile(auth.currentUser, {
         displayName: name
       }).then(() => {
@@ -21,7 +34,9 @@ export default function DatTenUser({ navigation}) {
         setDoc(doc(db, "users", auth.currentUser.uid), {
           name: name,
           UID: auth.currentUser.uid, // Thêm UID vào tài liệu người dùng
-          userId: email // Sử dụng email từ params
+          userId: email, // Sử dụng email từ params
+          birthDate: `${day}/${month}/${year}`, // Tạo một chuỗi ngày tháng năm sinh
+          gender: gender // Lưu giới tính
         }).then(() => {
           navigation.navigate('Profile');
         }).catch((error) => {
@@ -31,7 +46,7 @@ export default function DatTenUser({ navigation}) {
         console.log("Update profile error: ", error);
       });
     } else {
-    alert("Name is required", "Please enter your name.");
+      Alert.alert("Name is required", err.message);
     }
   };
 
@@ -50,7 +65,7 @@ return (
       </View>
 
       <View style={styles.view2}>
-        <Text style={styles.text1}>Tên Zalo</Text>
+        <Text style={styles.text1}>Tên của bạn</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter your name"
@@ -58,10 +73,51 @@ return (
           value={name}
           onChangeText={(text) => setName(text)}>
         </TextInput>
-        
       </View>
-      
+
       <View style={styles.view3}>
+          <Text style={styles.text2}>Ngày sinh</Text>
+          <View style={styles.ntnsPicker}>
+            <Picker style={styles.datePicker} selectedValue={day} onValueChange={(itemValue, itemIndex) => setDay(itemValue)}>
+              {days.map((day) => (
+                <Picker.Item label={day} value={day} key={day} />
+              ))}
+            </Picker>
+
+            <Picker style={styles.datePicker}selectedValue={month} onValueChange={(itemValue, itemIndex) => setMonth(itemValue)}>
+              {months.map((month) => (
+                <Picker.Item label={month} value={month} key={month} />
+              ))}
+            </Picker>
+
+            <Picker style={styles.datePicker} selectedValue={year} onValueChange={(itemValue, itemIndex) => setYear(itemValue)}>
+              {years.map((year) => (
+                <Picker.Item label={year} value={year} key={year} />
+              ))}
+            </Picker>
+
+          </View>
+        </View>  
+        
+        <View style={styles.view3}>
+          <Text style={styles.text2}>Giới tính</Text>
+          <View style={styles.view31}>
+            <TouchableOpacity
+              style={[styles.gioitinh, gender === 'Nam' && styles.nutgioitinh]}
+              onPress={() => setGender('Nam')}
+            >
+              <Text style={styles.radioText}>Nam</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.gioitinh, gender === 'Nữ' && styles.nutgioitinh]}
+              onPress={() => setGender('Nữ')}
+            >
+              <Text style={styles.radioText}>Nữ</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      
+      {/* <View style={styles.view3}>
         <Text style={styles.textNote}>Lưu ý khi đặt tên</Text>
         <View style={styles.view3_1}>
           <Text style={styles.textNote1}>
@@ -74,7 +130,7 @@ return (
             <Text> Nên sử dụng tên thật giúp bạn bè dễ nhận ra bạn</Text>
           </Text>
         </View>
-      </View>
+      </View> */}
 
       <View style={styles.view4}>
         <Pressable style={styles.PreDK} onPress={() => onHandleSignup()}>
@@ -82,14 +138,14 @@ return (
         </Pressable>
       </View>
 
-      <View style={styles.view5}>
+      {/* <View style={styles.view5}>
         <Text style={styles.textdieukhoan}>
           <Text> Tiếp tục nghĩa là bạn đồng ý với các </Text> 
           <Text style={[styles.textdieukhoan, styles.blueText]}>
             Điều khoản sử dụng Zalo
           </Text>
         </Text>
-      </View>
+      </View> */}
 
     </View>
   )
@@ -97,11 +153,11 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 35,
+    marginTop: 32,
   },
   view1: {
     flexDirection: "row",
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
   },
   TaoTK: {
     marginLeft: 10,
@@ -120,7 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   text1: {
-    fontSize: 22,
+    fontSize: 20,
     marginLeft: 10,
     marginTop: 10,
   },
@@ -135,7 +191,8 @@ const styles = StyleSheet.create({
   },
   view3: {
     flexDirection: 'column',
-    marginLeft: 15,
+    margin: 12,
+    marginTop: 20,
   },
   textNote: {
     fontSize: 18,
@@ -163,7 +220,7 @@ const styles = StyleSheet.create({
   },
   PreDK: {
     margin: 40,
-    backgroundColor: "#66E86B",
+    backgroundColor: "#418df8",
     height: 50,
     width: 230,
     borderRadius: 20,
@@ -177,5 +234,41 @@ const styles = StyleSheet.create({
   textdieukhoan: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  //
+  text2: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  view31: {
+    flexDirection: 'row',
+  },
+  gioitinh: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: 'gray',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginRight: 5,
+  },
+  nutgioitinh: {
+    backgroundColor: '#418df8',
+    borderColor: '#418df8',
+  },
+  radioText: {
+    color: 'black',
+    textAlign: 'center',
+  },
+  ntnsPicker: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  datePicker: {
+    flex: 1,
+    height: 58,
+    backgroundColor: "#F6F7FB",
+    borderRadius: 10,
+    marginRight: 10,
   },
 });
