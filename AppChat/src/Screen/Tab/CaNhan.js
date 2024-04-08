@@ -32,11 +32,8 @@ const CaNhan = () => {
       // Fetch ảnh đại diện mới từ Firestore hoặc từ state nếu đã cập nhật
       if (auth.currentUser) {
         fetchPhotoURL(auth.currentUser.uid);
-        // fetchUserData(auth.currentUser.uid);
       }
     });
-    // Fetch dữ liệu người dùng mỗi khi trang được render lại
-    //fetchUserData();
 
     return unsubscribe;
   }, [navigation]);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, Alert, Image, TouchableOpacity, Pressable } from "react-native";
+import { StyleSheet, Text, View, Button, Alert, Image, TouchableOpacity, Pressable, TextInput } from "react-native";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -15,7 +15,16 @@ function ThongTinUser() {
   const [photoURL, setPhotoURL] = useState(null);
   const auth = getAuth();
   const firestore = getFirestore();
- 
+
+  const [gender, setGender] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [email, setEmail] = useState('');
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [editedBirthDate, setEditedBirthDate] = useState('');
+  const [editedGender, setEditedGender] = useState('');
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -24,6 +33,9 @@ function ThongTinUser() {
       } else {
         setDisplayName('');
         setPhotoURL(null);
+        setGender('');
+        setBirthDate('');
+        setEmail('');
       }
     });
 
@@ -38,6 +50,9 @@ function ThongTinUser() {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         setPhotoURL(userData.photoURL);
+        setGender(userData.gender || ''); // Sử dụng giới tính nếu có, nếu không thì để trống
+        setBirthDate(userData.birthDate || ''); // Sử dụng ngày sinh nếu có, nếu không thì để trống
+        setEmail(userData.userId); // Sử dụng email người dùng
       }
     } catch (error) {
       console.error("Error fetching photo URL: ", error);
@@ -158,6 +173,36 @@ const onHandleThongTin = () => {
   navigation.navigate('ThongTin');
 };
 
+const handleEditProfile = async () => {
+  try {
+    await updateUserProfile();
+    setIsEditing(false);
+    //setDisplayName(editedName); // Cập nhật displayName với tên mới đã chỉnh sửa
+    Alert.alert('Thông báo', 'Cập nhật thông tin thành công');
+  } catch (error) {
+    console.error("Error updating profile: ", error);
+    Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin');
+  }
+};
+
+const updateUserProfile = async () => {
+  try {
+    const userId = auth.currentUser.uid;
+    const userRef = doc(firestore, 'users', userId);
+    await setDoc(userRef, {
+      name: editedName,
+      gender: editedGender,
+      birthDate: editedBirthDate
+    }, { merge: true });
+    setDisplayName(editedName);
+    setGender(editedGender);
+    setBirthDate(editedBirthDate);
+  } catch (error) {
+    console.error("Error updating user profile: ", error);
+    throw error;
+  }
+};
+
 return (
   <View style={styles.container}>
 
@@ -200,14 +245,75 @@ return (
 
            <Text style={styles.userName}>{displayName}</Text>
 
-           <TouchableOpacity style={styles.updateContainer}>
+           {/* <TouchableOpacity style={styles.updateContainer}>
              <Icon name="create-outline" size={25} color="#007bff" style={styles.updateIcon} />
              <Text style={styles.updateText}>Cập nhật thông tin</Text>
-           </TouchableOpacity>
+           </TouchableOpacity> */}
 
          </View>
        </View>
 
+       {/* <View style={styles.view3}>
+          <Text style={styles.thongtin}>Thông tin cá nhân</Text>
+
+          {isEditing ? (
+            <View style={styles.viewthongtin}>
+              <TextInput
+                style={styles.input}
+                value={editedGender}
+                onChangeText={setEditedGender}
+                placeholder="Giới tính"
+              />
+              <TextInput
+                style={styles.input}
+                value={editedBirthDate}
+                onChangeText={setEditedBirthDate}
+                placeholder="Ngày sinh"
+              />
+              <TextInput
+                style={styles.input}
+                value={editedName}
+                onChangeText={setEditedName}
+                placeholder="Tên"
+              />
+            </View>
+          ) : (
+
+          <View style={styles.viewthongtin}>
+            <View style={styles.row}>
+              <Text style={styles.label}>Giới tính:</Text>
+              <Text style={styles.data}>{gender}</Text>
+            </View>
+
+            <View style={styles.separator1} />
+            <View style={styles.row}>
+              <Text style={styles.label}>Ngày sinh:</Text>
+              <Text style={styles.data}>{birthDate}</Text>
+            </View>
+            
+            <View style={styles.separator1} />
+            <View style={styles.row}>
+              <Text style={styles.label}>Email:</Text>
+              <Text style={styles.data}>{email}</Text>
+            </View>
+            <View style={styles.separator1} />
+          </View>
+          )}
+        </View>
+
+        <View style={styles.nutupdate}>
+        {isEditing ? (
+          <TouchableOpacity style={styles.updateContainer2} onPress={handleEditProfile}>
+              <Icon name="checkmark-outline" size={25} color="black" style={styles.updateIcon} />
+              <Text style={styles.updateText}>Cập nhật</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.updateContainer1} onPress={() => setIsEditing(true)}>
+          <Icon name="create-outline" size={25} color="black" style={styles.updateIcon} />
+          <Text style={styles.updateText}>Chỉnh sửa</Text>
+          </TouchableOpacity>
+        )}
+        </View> */}
       {/* Footer */}
       <View style={styles.footer}>
           <Image
@@ -265,7 +371,7 @@ cutLine: {
   height: 1,
   backgroundColor: "black",
   position: "absolute",
-  top: "30%",
+  top: "35%",
 },
 avatarContainer: {
   alignItems: "center",
@@ -315,6 +421,75 @@ avatarPlaceholder: {
 avatarPlaceholderText: {
   fontSize: 16,
   color: "#8E8E93",
+},
+//
+view3: {
+  //flex: 1,
+  marginTop: 10,
+},
+thongtin: {
+  fontSize: 15,
+  padding: 10,
+  fontWeight: '600',
+},
+viewthongtin: {
+  paddingHorizontal: 20,
+  paddingVertical: 10,
+},
+separator1: {
+  height: 1, // Độ cao của thanh phân cách
+  backgroundColor: '#ccc',
+  marginVertical: 15, // Khoảng cách dọc giữa các phần
+},
+row: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 5,
+},
+label: {
+  width: 100, // Độ rộng của nhãn (label)
+  fontWeight: 'bold',
+},
+data: {
+  flex: 1,
+  fontSize: 15,
+},
+// chỉnh sửa
+input: {
+  height: 40,
+  borderColor: 'gray',
+  borderWidth: 1,
+  marginBottom: 10,
+  paddingHorizontal: 10,
+},
+nutupdate: {
+  flex: 1,
+},
+updateContainer1: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: '#D9D9D9',
+  borderWidth: 1,
+  borderRadius: 20,
+  marginHorizontal: 30,
+},
+updateContainer2: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: '#D9D9D9',
+  borderWidth: 1,
+  borderRadius: 20,
+  marginHorizontal: 30,
+  marginTop: 50,
+},
+// updateIcon: {
+//   marginRight: 5, 
+//   //fontSize: 16,
+// },
+updateText: {
+  fontSize: 14,
 },
 // footer
 footer: {

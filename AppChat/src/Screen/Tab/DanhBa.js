@@ -29,7 +29,7 @@ const DanhBa = () => {
         <Tab.Navigator>
           <Tab.Screen name="Bạn bè" component={BanBe} />
           <Tab.Screen name="Nhóm" component={Nhom} />
-          <Tab.Screen name="OA" component={OA} />
+          {/* <Tab.Screen name="OA" component={OA} /> */}
         </Tab.Navigator>
 
       </SafeAreaView>

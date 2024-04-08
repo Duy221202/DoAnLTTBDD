@@ -102,14 +102,12 @@ return (
         <View style={styles.view3}>
           <Text style={styles.text2}>Giới tính</Text>
           <View style={styles.view31}>
-            <TouchableOpacity
-              style={[styles.gioitinh, gender === 'Nam' && styles.nutgioitinh]}
+            <TouchableOpacity  style={[styles.gioitinh, gender === 'Nam' && styles.nutgioitinh]}
               onPress={() => setGender('Nam')}
             >
               <Text style={styles.radioText}>Nam</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.gioitinh, gender === 'Nữ' && styles.nutgioitinh]}
+            <TouchableOpacity  style={[styles.gioitinh, gender === 'Nữ' && styles.nutgioitinh]}
               onPress={() => setGender('Nữ')}
             >
               <Text style={styles.radioText}>Nữ</Text>

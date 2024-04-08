@@ -15,7 +15,7 @@ export default function CaiDat() {
   const onHandleLogout = () => {
     signOut(auth)
       .then(() => {
-        alert(
+        Alert.alert(
           'Logout success',         
         );navigation.navigate('Welcome');
       })

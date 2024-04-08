@@ -10,6 +10,7 @@ const ThongTin = () => {
   const firestore = getFirestore();
   const [displayName, setDisplayName] = useState('');
   const [photoURL, setPhotoURL] = useState(null);
+
   const [gender, setGender] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [email, setEmail] = useState('');
@@ -125,12 +126,23 @@ const ThongTin = () => {
 
           {isEditing ? (
             <View style={styles.viewthongtin}>
-              <TextInput
-                style={styles.input}
-                value={editedGender}
-                onChangeText={setEditedGender}
-                placeholder="Giới tính"
-              />
+              <View style={styles.view3}>
+                <Text style={styles.text2}>Giới tính</Text>
+          <View style={styles.view31}>
+            <TouchableOpacity  style={[styles.gioitinh, gender === 'Nam' && styles.nutgioitinh]}
+              onPressTouchableOpacity
+            ={() => setGender('Nam')}
+            >
+              <Text style={styles.radioText}>Nam</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.gioitinh, gender === 'Nữ' && styles.nutgioitinh]}
+              onPress={() => setGender('Nữ')}
+            >
+              <Text style={styles.radioText}>Nữ</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
               <TextInput
                 style={styles.input}
                 value={editedBirthDate}
@@ -183,18 +195,6 @@ const ThongTin = () => {
   </View>
   );
 };
-
-//         <View>
-//           <TouchableOpacity style={styles.updateContainer}>
-//               <Icon name="create-outline" size={25} color="black" style={styles.updateIcon} />
-//               <Text style={styles.updateText}>Chỉnh sửa</Text>
-//           </TouchableOpacity>
-//         </View>
-
-//       </ScrollView>
-//     </View>
-//     )
-// }
 
 const styles = StyleSheet.create({
     container: {

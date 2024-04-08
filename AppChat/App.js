@@ -48,8 +48,9 @@ const App = () => {
 
         <Stack.Screen name="ThongTin" component={ThongTin} />
 
-        {/* <Stack.Screen name="DoanChat" component={DoanChat} /> */}
+        <Stack.Screen name="DoanChat" component={DoanChat} />
         <Stack.Screen name="DangKy" component={DangKy} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

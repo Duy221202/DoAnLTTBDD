@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image, FlatList, ActivityIndicator } from 'react-native';
+import { SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image, FlatList, ActivityIndicator, Alert } from 'react-native';
 //import Icon from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
@@ -74,6 +74,12 @@ const TimKiem_BanBe = () => {
         updatedFriendsList.push({ ...friend, isFriend });
       }
       setFriendsList(updatedFriendsList);
+      // Kiểm tra xem có bạn bè nào được tìm thấy hay không
+      if (foundFriends.length === 0) {
+        // Hiển thị thông báo khi không tìm thấy bạn bè
+        Alert.alert("Không tìm thấy bạn bè.");
+        console.log("Không tìm thấy bạn bè.");
+      }
     } catch (error) {
       console.error("Lỗi tìm nạp người dùng:", error);
     } finally {

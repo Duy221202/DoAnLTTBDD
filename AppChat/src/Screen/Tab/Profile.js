@@ -150,7 +150,7 @@ const updatePhotoURL = async (newURL, userId) => {
   
 const onHandleCont = () => {
     Alert.alert(
-      'Signup success',
+      'Đăng ký thành công',
       'You have signed up successfully!',
       [{ text: 'OK'}]
     );

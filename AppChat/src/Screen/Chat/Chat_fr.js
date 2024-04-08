@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image,TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, onSnapshot, doc, addDoc, query, orderBy, getDoc } from 'firebase/firestore';
 import { getDownloadURL } from 'firebase/storage';
 //import { Video } from 'expo-av';
 import { GiftedChat } from 'react-native-gifted-chat';
-//import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 //import * as DocumentPicker from 'expo-document-picker';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon1 from 'react-native-vector-icons/FontAwesome5';
+//import { MessageBox } from 'react-chat-elements'; // Import MessageBox
 
 const Chat_fr = () => {
   const navigation = useNavigation();
@@ -22,7 +24,9 @@ const Chat_fr = () => {
   const storage = getStorage();
   const [userData, setUserData] = useState(null);
   const [showIcons, setShowIcons] = useState(true); // Biến trạng thái để kiểm soát việc hiển thị icon gửi tin nhắn
-  
+  // const [message, setMessage] = useState('');
+  // const [showSendIcon, setShowSendIcon] = useState(false); // Biến trạng thái để kiểm soát việc hiển thị icon gửi tin nhắn
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -100,10 +104,20 @@ const Chat_fr = () => {
       let videoContentType = null;
       let documentContentType = null;
   
-      if (image) {
-        imageContentType = 'image/jpeg'; // assuming image is always jpeg for simplicity
-        imageDownloadURL = await uploadFileToFirebaseStorage(image, auth.currentUser?.uid, imageContentType);
-      }
+      // Xử lý gửi tin nhắn ảnh
+    if (image) {
+      let imageDownloadURL = null;
+      let imageContentType = null;
+      imageContentType = 'image/jpeg'; // assuming image is always jpeg for simplicity
+      imageDownloadURL = await uploadFileToFirebaseStorage(image, auth.currentUser?.uid, imageContentType);
+      // Thêm thông tin ảnh vào tin nhắn trước khi gửi
+      messageToSend.image = imageDownloadURL;
+    }
+
+      // if (image) {
+      //   imageContentType = 'image/jpeg'; // assuming image is always jpeg for simplicity
+      //   imageDownloadURL = await uploadFileToFirebaseStorage(image, auth.currentUser?.uid, imageContentType);
+      // }
   
       if (video) {
         videoContentType = 'video/mp4'; // assuming video is always mp4 for simplicity
@@ -120,7 +134,8 @@ const Chat_fr = () => {
         createdAt,
         text: text || '',
         user,
-        image: imageDownloadURL,
+        image: imageDownloadURL || null, // Ensure to include image even if it's not an image message
+        //image: imageDownloadURL,
         video: videoDownloadURL,
         document: documentDownloadURL,
         imageContentType,
@@ -158,14 +173,69 @@ const Chat_fr = () => {
   
     return downloadURL;
   };
-  
-  const handleTextChange = (text) => {
-    // Nếu có văn bản trong hộp tin nhắn, ẩn các biểu tượng
-    setShowIcons(text === '');
+
+  const renderCustomActions = (props) => {
+    // Render các actions tùy chỉnh ở đây
+    // Bạn có thể thêm các actions khác nếu cần
+    return (
+      <View style={styles.customActionsContainer}>
+        <Icon name="document-attach" size={25} color="black" style={styles.icon} onPress={() => handleAttachDocument()} />
+        <Icon name="image" size={25} color="black" style={styles.icon} onPress={() => handlePickImage()} />
+        <Icon1 name="photo-video" size={25} color="black" style={styles.icon} onPress={() => handlePickVideo()} />
+    </View>
+    );
   };
-  const handleSend = (messages) => {
-    // Xử lý việc gửi tin nhắn ở đây
-    console.log('Message sent:', messages[0]);
+
+  const renderMessageImage = ({ currentMessage }) => {
+    if (currentMessage.image) {
+      return (
+        <Image
+          source={{ uri: currentMessage.image }}
+          style={styles.messageImage}
+        />
+      );
+    }
+    return null;
+  };
+
+  const handlePickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Quyền truy cập thư viện ảnh bị từ chối!');
+        return;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+      if (!result.cancelled) {
+        const image = result.uri;
+        const message = [{
+          _id: Math.random().toString(),
+          createdAt: new Date(),
+          user: {
+            _id: auth.currentUser?.uid,
+            avatar: userData?.photoURL || 'default_avatar_url',
+          },
+          image: image,
+        }];
+        onSend(message);
+      }
+    } catch (error) {
+      console.log('Error picking image:', error);
+    }
+  };
+  
+  const handleAttachDocument = async () => {
+    // Xử lý việc chọn file document ở đây
+    // Sử dụng thư viện Expo DocumentPicker hoặc các phương thức khác để chọn file document
+  };
+  
+  const handlePickVideo = async () => {
+    // Xử lý việc chọn video ở đây
+    // Sử dụng thư viện Expo ImagePicker hoặc các phương thức khác để chọn video
   };
   
   return (
@@ -189,36 +259,7 @@ const Chat_fr = () => {
         </View>
       </View>
 
-      {/* <View style={styles.body}></View>
-
-      <View style={styles.footer}>
-        <View style={styles.chatfooter}>
-          <Icon name="image" size={25} color="white" style={styles.icon} />
-          <GiftedChat
-            messages={messages}
-            placeholder="Tin nhắn"
-            //showAvatarForEveryMessage={false} // Không hiển thị avatar cho mỗi tin nhắn trong cuộc trò chuyện.
-            //showUserAvatar={false} // Không hiển thị avatar của người dùng hiện tại (user) trong cuộc trò chuyện.
-            onSend={messages => onSend(messages)}
-            messagesContainerStyle={{
-              backgroundColor: '#fff'
-            }}
-            textInputStyle={{
-              backgroundColor: '#fff',
-              borderRadius: 20,
-            }}
-            user={{
-              _id: auth?.currentUser?.uid,
-              avatar: userData?.photoURL || 'default_avatar_url',
-            }}
-          />
-            <Icon name="ellipsis-horizontal-outline" size={25} color="white" style={styles.icon} />
-            <Icon name="mic-outline" size={25} color="white" style={styles.icon} />
-            <Icon name="image" size={25} color="white" style={styles.icon} />
-        </View>
-      </View> */}
-
-      <GiftedChat
+      <GiftedChat 
         messages={messages}
         placeholder="Tin nhắn"
         //showAvatarForEveryMessage={false} // Không hiển thị avatar cho mỗi tin nhắn trong cuộc trò chuyện.
@@ -235,7 +276,10 @@ const Chat_fr = () => {
           _id: auth?.currentUser?.uid,
           avatar: userData?.photoURL || 'default_avatar_url',
         }}
+        renderActions={renderCustomActions} // Thêm prop renderActions vào đây
+        //renderMessageImage={renderMessageImage} // Thêm prop renderMessageImage vào đây
       />
+
     </SafeAreaView>
   </View>
 
@@ -247,7 +291,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    marginTop: 35,
+    marginTop: 32,
   },
   header: {
     flexDirection: 'row',
@@ -271,46 +315,19 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 10,
   },
-  // footer
-  // footer: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   backgroundColor: "#66E86B",
-  //   height: 50,
-  //   width: "100%",
-  // },
-  // textTK: {
-  //   marginLeft: 10,
-  //   fontSize: 18,
-  //   width: 250,
-  // },
-  // chatfooter: {
-  //   flexDirection: 'row',
-  // },
-  // iconSend: {
-  //   marginLeft: 85,
-  // },
-  body: {
-    flex: 1,
-  },
-  footer: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    backgroundColor: "#66E86B",
-    height: 50,
-    width: "100%",
-  },
-  textTK: {
-    marginLeft: 10,
-    fontSize: 18,
-    width: 262,
-  },
-  chatfooter: {
+  customActionsContainer: {
+    height: 48,
     flexDirection: 'row',
+    alignItems: 'center',
   },
-  iconSend: {
-    marginLeft: 85,
+  // Các kiểu khác...
+  messageImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginVertical: 5,
   },
 });
 
 export default Chat_fr; 
+
