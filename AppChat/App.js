@@ -23,6 +23,8 @@ import Chat_fr from "./src/Screen/Chat/Chat_fr";
 import ThongTin from "./src/Screen/User/ThongTin";
 
 import DangKy from "./src/Screen/DangKy/DangKy";
+import OptionsMenu from "./src/Screen/Chat/OptionsMenu ";
+import PlayVideo from "./src/Screen/Chat/PlayVideo";
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -50,6 +52,9 @@ const App = () => {
 
         <Stack.Screen name="DoanChat" component={DoanChat} />
         <Stack.Screen name="DangKy" component={DangKy} />
+
+        {/* <Stack.Screen name="OptionsMenu" component={OptionsMenu} /> */}
+        <Stack.Screen name="PlayVideo" component={PlayVideo} />
 
       </Stack.Navigator>
     </NavigationContainer>
