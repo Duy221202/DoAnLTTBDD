@@ -8,6 +8,7 @@ const PlayVideo = () => {
     const { uri } = route.params;
     const [isLoading, setIsLoading] = useState(true);
     const [isImage, setIsImage] = useState(false);
+    const [isVideo, setIsVideo] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -60,14 +61,15 @@ const PlayVideo = () => {
                 />
             </View>
         );
-    } else {
+    } 
+    else {
         return (
             <View style={styles.container}>
                 <Video
                     source={{ uri: uri }}
                     style={styles.video}
                     resizeMode="contain"
-                    shouldPlay
+                    shouldPlay={false}
                     useNativeControls
                     isLooping
                 />
@@ -84,12 +86,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     video: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width * 0.8,
+        height: Dimensions.get('window').height * 0.8,
     },
     image: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width * 0.8,
+        height: Dimensions.get('window').height * 0.8,
     },
 });
 

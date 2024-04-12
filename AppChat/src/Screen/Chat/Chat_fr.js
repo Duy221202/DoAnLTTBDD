@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, Pressable, StyleSheet, Text, View, Image,TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView, Pressable, StyleSheet, Text, View, Image,TouchableWithoutFeedback, TouchableOpacity, Alert } from 'react-native';
 import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, onSnapshot, doc, addDoc, query, orderBy, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, query, orderBy, getDoc } from 'firebase/firestore';
 import { getDownloadURL } from 'firebase/storage';
 import { Video } from 'expo-av';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -12,6 +12,8 @@ import * as DocumentPicker from 'expo-document-picker';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/FontAwesome5';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+import { deleteDoc, updateDoc } from 'firebase/firestore';
 
 const Chat_fr = () => {
   const navigation = useNavigation();
@@ -24,6 +26,20 @@ const Chat_fr = () => {
   const storage = getStorage();
   const [userData, setUserData] = useState(null);
 
+  const [selectedMessage, setSelectedMessage] = useState(null);
+
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const handleMessagePress = (messageId) => {
+    // setSelectedMessageId(messageId);
+    setSelectedMessageId(prevId => prevId === messageId ? null : messageId);
+  };
+
+  const [showOptions, setShowOptions] = useState(false);
+
+  const toggleOptions = () => {
+    setShowOptions(!showOptions);
+  };
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -64,7 +80,7 @@ const Chat_fr = () => {
             });
           });
           setMessages(messages);
-          console.log(messages)
+          //console.log(messages)
         });
         return unsubscribe;
       } catch (error) {
@@ -196,39 +212,39 @@ const Chat_fr = () => {
     }
   };
   
-  const pickDocument = async () => {
-    const result = await DocumentPicker.getDocumentAsync();
-    console.log(result);
+  // const pickDocument = async () => {
+  //   const result = await DocumentPicker.getDocumentAsync();
+  //   console.log(result);
   
-    if (!result.cancelled) {
-      const uri = result.assets[0].uri;
-      console.log(uri);
-      const nameFile = result.assets[0].name;
-      console.log(nameFile);
-      const fileName = uri.split('/').pop(); // Lấy tên tệp từ đường dẫn URI
-      const message = nameFile; //'[Tài liệu]'
-      const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
-      if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
-        const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
-        onSend([
-          {
-            _id: Math.random().toString(),
-            createdAt: new Date(),
-            user: {
-              _id: auth.currentUser?.uid,
-              avatar: userData?.photoURL || 'default_avatar_url',
-            },
-            text: message,
-            document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
-          }
-        ]);
-      } else {
-        console.log("Selected file is an image or video. Please select a document.");
-      }
-    } else {
-      console.log("No document selected");
-    }
-  };
+  //   if (!result.cancelled) {
+  //     const uri = result.assets[0].uri;
+  //     console.log(uri);
+  //     const nameFile = result.assets[0].name;
+  //     console.log(nameFile);
+  //     const fileName = uri.split('/').pop(); // Lấy tên tệp từ đường dẫn URI
+  //     const message = nameFile; //'[Tài liệu]'
+  //     const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
+  //     if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
+  //       const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
+  //       onSend([
+  //         {
+  //           _id: Math.random().toString(),
+  //           createdAt: new Date(),
+  //           user: {
+  //             _id: auth.currentUser?.uid,
+  //             avatar: userData?.photoURL || 'default_avatar_url',
+  //           },
+  //           text: message,
+  //           document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
+  //         }
+  //       ]);
+  //     } else {
+  //       console.log("Selected file is an image or video. Please select a document.");
+  //     }
+  //   } else {
+  //     console.log("No document selected");
+  //   }
+  // };
   
   // Hàm để lấy phần mở rộng của tên tệp
   const getFileExtension = (fileName) => {
@@ -279,12 +295,83 @@ const Chat_fr = () => {
     return (
       <View style={styles.customActionsContainer}>
         {/* <Icon name="document-attach" size={25} color="black" style={styles.icon} onPress={pickImage} /> */}
-        <Icon name="image" size={25} color="black" style={styles.icon} onPress={pickImage} />
-        <Icon1 name="photo-video" size={25} color="black" style={styles.icon} onPress={pickDocument} />
+        <Icon1 name="photo-video" size={25} color="black" style={styles.icon} onPress={pickImage} />
+        {/* <Icon name="image" size={25} color="black" style={styles.icon} onPress={pickDocument} /> */}
     </View>
     );
   };
+
+  // Nút thu hồi tin nhắn
+  // const deleteMessage = async (messageId) => {
+  //   try {
+  //     if (!messageId) return;
+
+  //     const db = getFirestore();
+  //     const chatRoomId = [auth.currentUser?.uid, friendData?.UID].sort().join('_');
+  //     const messagesRef = collection(db, "Chats", chatRoomId, 'chat_mess');
+  //     const messagesDocRef =doc(messagesRef, messageId);
+  //     await deleteDoc(messagesDocRef);
+
+  //     setSelectedMessage(null);
+  //   } catch (error) {
+  //     console.error("Lỗi khi xóa tin nhắn:", error);
+  //   }
+  // };
+
+  // Nút thu hồi tin nhắn CÁCH 2
+  const recallMessage = async (messageId, userId) => {
+    try {
+      if (!messageId) return;
   
+      const db = getFirestore();
+      const chatRoomId = [auth.currentUser?.uid, friendData?.UID].sort().join('_');
+      const messagesRef = collection(db, "Chats", chatRoomId, 'chat_mess');
+  
+      // Kiểm tra xem người gửi tin nhắn có phải là người dùng hiện tại hay không
+      if (userId === auth.currentUser?.uid) {
+        //Alert.alert("Tin nhắn đã được thu hồi")
+        const messagesDocRef = doc(messagesRef, messageId);
+        //await deleteDoc(messagesDocRef);
+
+        await updateDoc(messagesDocRef, {
+          text: "Đã thu hồi tin nhắn",
+        });
+      } else {
+        Alert.alert("Không thể thu hồi tin nhắn của người khác")
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa tin nhắn:", error);
+    }
+  };
+
+  // Nút xóa tin nhắn chỉ mình tôi
+  // const deleteMessage = async (messageId) => {
+  //   try {
+  //     if (!messageId) return;
+  
+  //     // Đảm bảo auth đã được import từ thư viện phù hợp và là một đối tượng có thể truy cập
+  //     const user = auth?.currentUser;
+  //     if (!user) {
+  //       console.error("Người dùng không được xác định.");
+  //       return;
+  //     }
+  
+  //     const db = getFirestore();
+  //     const chatRoomId = [user.uid, friendData?.UID].sort().join('_');
+  //     const messagesRef = collection(db, "Chats", chatRoomId, 'chat_mess');
+  
+  //     // Cập nhật trường isDeleted của tin nhắn để đánh dấu nó đã bị xóa
+  //     const messageDocRef = doc(messagesRef, messageId);
+  //     await updateDoc(messageDocRef, {
+  //       isDeleted: true // Đánh dấu tin nhắn đã bị xóa
+  //     });
+  
+  //     console.log("Đã xóa tin nhắn");
+  //   } catch (error) {
+  //     console.error("Lỗi khi xóa tin nhắn:", error);
+  //   }
+  // };
+
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -314,8 +401,9 @@ const Chat_fr = () => {
           _id: auth?.currentUser?.uid,
           avatar: userData?.photoURL || 'default_avatar_url',
         }}
-        renderActions={renderCustomActions} // Thêm prop renderActions vào đây
+        renderActions={renderCustomActions} 
 
+        
         renderMessage={(props) => {
           const isCurrentUser = props.currentMessage.user && props.currentMessage.user._id === auth?.currentUser?.uid;
           const isFirstMessage = isCurrentUser || !props.previousMessage || (props.previousMessage.user && props.previousMessage.user._id !== props.currentMessage.user._id);
@@ -340,7 +428,7 @@ const Chat_fr = () => {
                       {friendData.name}
                     </Text>
                   )}
-                  <View style={{ backgroundColor: isCurrentUser ? '#008DDA' : '#41C9E2', padding: 5, borderRadius: 10, maxWidth: 250, marginLeft: isFirstMessage ? 0 : 40, marginRight: isFirstMessage ? 10 : 0, marginTop: isFirstMessage ? 5 : 0 }}>
+                  <View style={{ backgroundColor: isCurrentUser ? '#008DDA' : '#41C9E2', padding: 5, borderRadius: 10, maxWidth: 230, marginLeft: isFirstMessage ? 0 : 40, marginRight: isFirstMessage ? 10 : 0, marginTop: isFirstMessage ? 5 : 0 }}>
                     {props.currentMessage.document ? (
                       <TouchableWithoutFeedback onPress={() => handleDocumentPress(props.currentMessage.document)}>
                         <View>
@@ -365,19 +453,43 @@ const Chat_fr = () => {
                         <Pressable onPress={() => handleVideoPress(props.currentMessage.video)}>             
                           <Video
                             source={{ uri: props.currentMessage.video }}
-                            style={{ width: 200, height: 200, borderRadius: 10 }}
+                            style={{ width: 150, height: 200, borderRadius: 10 }}
                             resizeMode="cover"
                             useNativeControls
                             shouldPlay={false}
-                          />        
+                          />     
+                          <Text style={{ fontSize: 12, marginTop: 5, color: 'black' }}>{`${props.currentMessage.createdAt.getHours()}:${props.currentMessage.createdAt.getMinutes()}`}</Text>       
                         </Pressable>
                       </View>
                     ) : (
                       <>
-                        <Text style={{ fontSize: 16, margin: 5 }}>{props.currentMessage.text}</Text>
-                        <Text style={{ fontSize: 12, marginTop: 5, color: 'black' }}>
-                          {`${props.currentMessage.createdAt.getHours()}:${props.currentMessage.createdAt.getMinutes()}`}
-                        </Text>
+                        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                          <TouchableOpacity style={styles.optionsBtn} onPress={() => handleMessagePress(props.currentMessage._id)}>
+                            <Text style={{ fontSize: 16, margin: 5 }}>{props.currentMessage.text}</Text>
+                            <Text style={{ fontSize: 12, marginTop: 5, color: 'black', marginLeft: 5 }}>
+                              {`${props.currentMessage.createdAt.getHours()}:${props.currentMessage.createdAt.getMinutes()}`}
+                            </Text>
+                          </TouchableOpacity>
+
+                          {/* Nút thu hồi tin nhắn */}
+                          {props.currentMessage._id === selectedMessageId && (
+                            <TouchableOpacity onPress={() => recallMessage(props.currentMessage._id, props.currentMessage.user._id)} style={styles.optionItemTest}>
+                              <Icon2 name="undo" style={styles.optionIcon} />
+                              <Text>Thu hồi</Text>
+                            </TouchableOpacity>
+                          )}
+
+                          {/* Nút xóa chỉ mình tôi */}
+                          {/* {props.currentMessage.user._id === auth?.currentUser?.uid && (
+                            <TouchableOpacity onPress={() => deleteMessage(props.currentMessage._id)}>
+                              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Icon2 name="trash" style={styles.optionIcon} />
+                                <Text>Xóa chỉ mình tôi</Text>
+                              </View>
+                            </TouchableOpacity>
+                          )} */}
+
+                        </View>
                       </>
                     )}
                   </View>
@@ -387,7 +499,7 @@ const Chat_fr = () => {
           );
         }}
       />
-
+      
     </SafeAreaView>
   </View>
   );
@@ -427,6 +539,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+
+  // action sheet
+  optionsBtn: {
+    flexDirection: 'column',
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+  },
+  optionsMenu: {
+    top: 10,
+    flexDirection: 'row',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    padding: 5,
+    elevation: 10,
+  },
+  optionItem: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  optionIcon: {
+    fontSize: 15,
+    paddingVertical: 5,
+    color: "red",
+  },
+  optionItemTest: {
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    flexDirection: 'column',
+  }
 });
 
 export default Chat_fr;
