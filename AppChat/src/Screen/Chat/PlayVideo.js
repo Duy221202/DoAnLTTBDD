@@ -8,7 +8,7 @@ const PlayVideo = () => {
     const { uri } = route.params;
     const [isLoading, setIsLoading] = useState(true);
     const [isImage, setIsImage] = useState(false);
-    const [isVideo, setIsVideo] = useState(false);
+    // const [isVideo, setIsVideo] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -70,8 +70,8 @@ const PlayVideo = () => {
                     style={styles.video}
                     resizeMode="contain"
                     shouldPlay={false}
-                    useNativeControls
-                    isLooping
+                    // useNativeControls
+                    // isLooping
                 />
             </View>
         );

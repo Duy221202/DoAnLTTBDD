@@ -5,6 +5,9 @@ import { useNavigation } from "@react-navigation/native";
 import BanBe from '../Tab_DanhBa/BanBe';
 import Nhom from '../Tab_DanhBa/Nhom';
 import OA from '../Tab_DanhBa/OA';
+
+import NhomDuy from '../Tab_DanhBa/NhomDuy';
+
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const DanhBa = () => {
@@ -28,7 +31,8 @@ const DanhBa = () => {
 
         <Tab.Navigator>
           <Tab.Screen name="Bạn bè" component={BanBe} />
-          <Tab.Screen name="Nhóm" component={Nhom} />
+          {/* <Tab.Screen name="Nhóm1" component={Nhom} /> */}
+          <Tab.Screen name="Nhóm" component={NhomDuy} />
           {/* <Tab.Screen name="OA" component={OA} /> */}
         </Tab.Navigator>
 

@@ -11,13 +11,6 @@ const LoiMoiKetBan = () => {
   const navigation = useNavigation();
   const Tab = createMaterialTopTabNavigator();
 
-  // const handleGoBack = () => {
-  //   navigation.reset({
-  //     index: 0,
-  //     routes: [{ name: 'Main' }],
-  //   });
-  // };
-
   return (
     <View style={styles.container}>
       <SafeAreaView>

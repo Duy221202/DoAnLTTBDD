@@ -77,7 +77,7 @@ const BanBe = () => {
                     console.log(userFriends);
                     setUserFriendsList(userFriends); // Update friends list
                     // Sắp xếp bạn bè của người dùng theo thứ tự chữ cái của tên
-                    // userFriends.sort((a, b) => a.name.localeCompare(b.name));
+                    //userFriends.sort((a, b) => a.name.localeCompare(b.name));
                 });
                 
 

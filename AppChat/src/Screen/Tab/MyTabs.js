@@ -52,7 +52,7 @@ function MyTabs() {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Khám Phá"
         component={KhamPha}
         options={{
@@ -79,7 +79,7 @@ function MyTabs() {
             )
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Cá Nhân"
         //initialParams={{ name: name, img: img}} // Truyền name, img qua trang CaNhan

@@ -13,7 +13,7 @@ const Chat = () => {
   const [userData, setUserData] = useState(null);
   const [chats, setChats] = useState([]);
 
-  // Fetch user data
+  //Tìm nạp dữ liệu người dùng
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -35,8 +35,7 @@ const Chat = () => {
     }
   }, [db, user]);
 
-  // Fetch chats data and listen for real-time updates
-// Fetch chats data and listen for real-time updates
+// Tìm nạp dữ liệu trò chuyện và lắng nghe cập nhật theo thời gian thực
 useEffect(() => {
   const chatsCollectionRef = collection(db, 'Chats');
   const chatsQuery = query(chatsCollectionRef, where('UID', 'array-contains', user.uid)); // Tạo truy vấn với điều kiện
@@ -62,8 +61,7 @@ useEffect(() => {
             orderBy('createdAt', 'desc')
           );
 
-          // Listen for real-time updates for chat messages
-        // Listen for real-time updates for chat messages
+        // Nghe thông tin cập nhật theo thời gian thực cho tin nhắn trò chuyện
         const unsubscribeMessages = onSnapshot(messQuery, (messSnapshot) => {
           let latestMessage = null;
           if (!messSnapshot.empty) {
@@ -83,11 +81,11 @@ useEffect(() => {
 
           // Kiểm tra nếu có dữ liệu latestMessage trước khi thêm vào danh sách
           if (latestMessage) {
-            // Update chatsMap with the new chat item
+            // Cập nhật chatsMap với mục trò chuyện mới
             chatsMap.set(chatItem.ID_room, chatItem);
           }
 
-          // Convert map values to array and sort by latest message timestamp
+          // Chuyển đổi giá trị bản đồ thành mảng và sắp xếp theo dấu thời gian của tin nhắn mới nhất
           const sortedChats = Array.from(chatsMap.values()).sort((a, b) => {
             if (a.latestMessage && b.latestMessage) {
               return b.latestMessage.createdAt - a.latestMessage.createdAt;
@@ -95,12 +93,12 @@ useEffect(() => {
             return 0;
           });
 
-          // Set the state with sorted chat items
+          // Đặt trạng thái với các mục trò chuyện được sắp xếp
           setChats([...sortedChats]);
         });
 
         return () => {
-          // Unsubscribe the previous listener for chat messages
+          // Hủy đăng ký người nghe tin nhắn trò chuyện trước đó
           unsubscribeMessages();
         };
 
@@ -110,7 +108,7 @@ useEffect(() => {
   );
 
   return () => {
-    // Unsubscribe the previous listener for chats
+    // Hủy đăng ký người nghe trước đó để trò chuyện
     unsubscribeChats();
   };
 }, [db, user]);

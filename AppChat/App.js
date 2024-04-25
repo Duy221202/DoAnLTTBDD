@@ -26,6 +26,13 @@ import DangKy from "./src/Screen/DangKy/DangKy";
 import OptionsMenu from "./src/Screen/Chat/OptionsMenu ";
 import PlayVideo from "./src/Screen/Chat/PlayVideo";
 
+import TaoNhom from "./src/Screen/Group/TaoNhom";
+
+import GroupChat from "./src/Screen/Chat/GroupChat";
+import NhomDuy from "./src/Screen/Tab_DanhBa/NhomDuy";
+import TaoNhomDuy from "./src/Screen/Tab_DanhBa/TaoNhomDuy";
+import DanhSachNhom from "./src/Screen/Tab_DanhBa/DanhSachNhom";
+
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
@@ -54,8 +61,16 @@ const App = () => {
         <Stack.Screen name="DangKy" component={DangKy} />
 
         {/* <Stack.Screen name="OptionsMenu" component={OptionsMenu} /> */}
+
         <Stack.Screen name="PlayVideo" component={PlayVideo} />
 
+        <Stack.Screen name="TaoNhom" component={TaoNhom} />
+
+        <Stack.Screen name="GroupChat" component={GroupChat} />
+        <Stack.Screen name="NhomDuy" component={NhomDuy} />
+        <Stack.Screen name="TaoNhomDuy" component={TaoNhomDuy} />
+        <Stack.Screen name="DanhSachNhom" component={DanhSachNhom} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

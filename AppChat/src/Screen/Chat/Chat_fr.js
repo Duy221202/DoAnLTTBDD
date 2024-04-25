@@ -212,39 +212,39 @@ const Chat_fr = () => {
     }
   };
   
-  // const pickDocument = async () => {
-  //   const result = await DocumentPicker.getDocumentAsync();
-  //   console.log(result);
+  const pickDocument = async () => {
+    const result = await DocumentPicker.getDocumentAsync();
+    console.log(result);
   
-  //   if (!result.cancelled) {
-  //     const uri = result.assets[0].uri;
-  //     console.log(uri);
-  //     const nameFile = result.assets[0].name;
-  //     console.log(nameFile);
-  //     const fileName = uri.split('/').pop(); // Lấy tên tệp từ đường dẫn URI
-  //     const message = nameFile; //'[Tài liệu]'
-  //     const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
-  //     if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
-  //       const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
-  //       onSend([
-  //         {
-  //           _id: Math.random().toString(),
-  //           createdAt: new Date(),
-  //           user: {
-  //             _id: auth.currentUser?.uid,
-  //             avatar: userData?.photoURL || 'default_avatar_url',
-  //           },
-  //           text: message,
-  //           document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
-  //         }
-  //       ]);
-  //     } else {
-  //       console.log("Selected file is an image or video. Please select a document.");
-  //     }
-  //   } else {
-  //     console.log("No document selected");
-  //   }
-  // };
+    if (!result.cancelled) {
+      const uri = result.assets[0].uri;
+      console.log(uri);
+      const nameFile = result.assets[0].name;
+      console.log(nameFile);
+      const fileName = uri.split('/').pop(); // Lấy tên tệp từ đường dẫn URI
+      const message = nameFile; //'[Tài liệu]'
+      const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
+      if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
+        const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
+        onSend([
+          {
+            _id: Math.random().toString(),
+            createdAt: new Date(),
+            user: {
+              _id: auth.currentUser?.uid,
+              avatar: userData?.photoURL || 'default_avatar_url',
+            },
+            text: message,
+            document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
+          }
+        ]);
+      } else {
+        console.log("Selected file is an image or video. Please select a document.");
+      }
+    } else {
+      console.log("No document selected");
+    }
+  };
   
   // Hàm để lấy phần mở rộng của tên tệp
   const getFileExtension = (fileName) => {
@@ -296,7 +296,7 @@ const Chat_fr = () => {
       <View style={styles.customActionsContainer}>
         {/* <Icon name="document-attach" size={25} color="black" style={styles.icon} onPress={pickImage} /> */}
         <Icon1 name="photo-video" size={25} color="black" style={styles.icon} onPress={pickImage} />
-        {/* <Icon name="image" size={25} color="black" style={styles.icon} onPress={pickDocument} /> */}
+        <Icon1 name="file-alt" size={25} color="black" style={styles.icon} onPress={pickDocument} />
     </View>
     );
   };
