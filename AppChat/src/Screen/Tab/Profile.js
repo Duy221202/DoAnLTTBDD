@@ -112,7 +112,7 @@ export default function Profile() {
       }
   
       const storage = getStorage();
-      const filename = `imgs/${userId}/${Date.now()}`;
+      const filename = `photo/${userId}/${Date.now()}`;
   
       // Lấy dữ liệu hình ảnh
       const response = await fetch(ure);

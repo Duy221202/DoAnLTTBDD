@@ -3,7 +3,7 @@ import {SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image } from
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import BanBe from '../Tab_DanhBa/BanBe';
-import Nhom from '../Tab_DanhBa/Nhom';
+// import Nhom from '../Tab_DanhBa/Nhom';
 import OA from '../Tab_DanhBa/OA';
 
 import NhomDuy from '../Tab_DanhBa/NhomDuy';

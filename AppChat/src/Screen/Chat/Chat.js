@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image, FlatList } from 'react-native';
+import { SafeAreaView, Pressable, StyleSheet, Text, View, TextInput, Image, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs, query , orderBy, where} from 'firebase/firestore';
@@ -115,7 +115,7 @@ useEffect(() => {
 
   // Render each chat item
   const renderItem = ({ item }) => (
-    <Pressable style={styles.itemContainer} onPress={() => navigation.navigate("Chat_fr", { friendData: item.otherUser })}>
+    <Pressable style={styles.itemContainer} onPress={() => navigation.navigate("Chat_fr", { friends: item.otherUser })}>
       <View style={styles.contentContainer}>
         <Image source={{ uri: item.otherUser.photoURL }} style={styles.avatar} />
         <View style={styles.messageContainer}>
@@ -134,12 +134,65 @@ useEffect(() => {
     </Pressable>
   ); 
 
+  // const [userFriends, setUserFriends] = useState({});
+  // const [senders, setSenders] = useState({});
+  // const [selectedFriend, setSelectedFriend] = useState(null);
+  // const navigation = useNavigation();
+  // const auth = getAuth();
+  // useEffect(() => {
+  //   const db = getFirestore();
+
+  //   const unsubscribeUserFriends = onSnapshot(doc(db, "users", auth.currentUser.uid), (doc) => {
+  //     if (doc.exists()) {
+  //       setUserFriends(doc.data().friends || {});
+  //     }
+  //   }, (error) => {
+  //     console.error("Error fetching user friends:", error);
+  //   });
+
+  //   const fetchSenders = async () => {
+  //     try {
+  //       const usersRef = collection(db, "users");
+  //       const usersSnapshot = await getDocs(usersRef);
+  //       const sendersData = {};
+  //       usersSnapshot.forEach((doc) => {
+  //         sendersData[doc.id] = doc.data();
+  //       });
+  //       setSenders(sendersData);
+  //     } catch (error) {
+  //       console.error("Error fetching users:", error);
+  //     }
+  //   };
+
+  //   fetchSenders();
+
+  //   return () => {
+  //     unsubscribeUserFriends();
+  //   };
+  // }, [auth.currentUser.uid]);
+
+  // // Xử lý khi click vào bạn bè
+  // const handleFriendClick = (friendId) => {
+  //   setSelectedFriend(friendId);
+  // };
+
+  // const renderFriend = ({ item: friendId }) => (
+  //   <TouchableOpacity key={friendId} onPress={() => handleFriendClick(friendId)} style={styles.itemuser}>
+  //     <Image style={styles.image}
+  //       source={{ uri: senders[friendId]?.photoURL }}
+  //       alt={senders[friendId]?.name}
+  //     />
+  //     <Text style={styles.text}>{senders[friendId]?.name}</Text>
+  //   </TouchableOpacity>
+  // );
+
   return (
     <View style={styles.container}>
       <SafeAreaView>
         <View style={styles.searchContainer}>
             <Icon name="search" size={20} color="white" />
-          <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_BanBe")}>
+          {/* <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_BanBe")}> */}
+          <Pressable style={styles.searchInput} onPress={() => navigation.navigate("TimKiem_Chat")}>
             <Text style={styles.textSearch}>Tìm kiếm</Text>
           </Pressable>
           <Icon name="qr-code" size={25} color="white" />
@@ -152,6 +205,19 @@ useEffect(() => {
         renderItem={renderItem}
         keyExtractor={(item, index) => item.ID_room.toString() + '_' + item.otherUser.UID}
       />
+      {/* <Text style={styles.title}></Text>
+            {Object.keys(userFriends).length === 0 ? (
+              <Text>Bạn không có bạn bè nào</Text>
+            ) : (
+              <FlatList
+                data={Object.keys(userFriends)}
+                renderItem={renderFriend}
+                keyExtractor={(friendId) => friendId}
+              />
+            )}
+            {selectedFriend && (
+              <Pressable friendId={selectedFriend} /> // Truyền friendId vào phần chatbox mới
+            )} */}
     </View>
   );
 }
@@ -225,6 +291,64 @@ const styles = StyleSheet.create({
     backgroundColor: '#dcdcdc',
     width: '100%',
   },
+  ///
+  // itemuser: {
+  //       flexDirection: 'row',
+  //       alignItems: 'center',
+  //       marginBottom: 30,
+  //   },
+  //   image: {
+  //       width: 60,
+  //       height: 60,
+  //       resizeMode: 'cover',
+  //       borderRadius: 30,
+  //       marginLeft: 20,
+  //   },
+  //   text: {
+  //       fontSize: 18,
+  //       marginLeft: 20,
+  //   },
+  //   view1: {
+  //       flexDirection: 'row',
+  //       margin: 10,
+  //   },
+  //   text1: {
+  //       fontSize: 15,
+  //       justifyContent: "center",
+  //       marginLeft: 10
+  //   },
+  //   separator: {
+  //       height: 5,
+  //       backgroundColor: '#ccc',
+  //       marginVertical: 5,
+  //   },
+  //   textall: {
+  //       fontSize: 16,
+  //       marginLeft: 10,
+  //       paddingHorizontal: 10,   
+  //   },
+  //   // textGroup: {
+  //   //     fontSize: 20,
+  //   //     fontWeight: 'bold',
+  //   //     marginLeft: 15,
+  //   //     marginTop: 10,
+  //   // },
+  // ////
+  // // container: {
+  // //   width: '80%',
+  // //   alignSelf: 'center',
+  // // },
+  // title: {
+  //   fontSize: 20,
+  //   fontWeight: 'bold',
+  // },
+  // friendItem: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   padding: 10,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: '#ccc',
+  // },
 });
 
 export default Chat;

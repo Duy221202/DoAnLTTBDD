@@ -5,10 +5,8 @@ import { getAuth } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon1 from 'react-native-vector-icons/FontAwesome5';
-import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
-const GroupChat = () => {
+
+const ChatNhom = () => {
   const route = useRoute();
   const { groupId } = route.params; // Lấy groupId từ route params
   const navigation = useNavigation();
@@ -156,6 +154,9 @@ const GroupChat = () => {
       saveActionMessage();
     }
   }, [actionMessage, groupId]);
+  ////////////////////
+  ///////////////////
+
 
   const sendMessage = async () => {
     try {
@@ -168,7 +169,7 @@ const GroupChat = () => {
           fileUrl = await pickImage(file);
         } else {
           //fileUrl = await uploadFileAsync(file);
-          fileUrl = await pickDocument(file);
+          fileUrl = await uploadFileToFirebaseStorage(file);
         }
       }
 
@@ -202,171 +203,55 @@ const GroupChat = () => {
     }
   };
 
-  const uploadFileAsync = async (file) => async (file, uid, contentType) => {
-  //const uploadFileAsync = async (file, uid, contentType) => {
-    const response = await fetch(file);
-    const blob = await response.blob();
+//   const uploadFileAsync = async (file) => async (file, uid, contentType) => {
+//     const response = await fetch(file);
+//     const blob = await response.blob();
   
-    const extension = file.split('.').pop(); // Lấy phần mở rộng của file
-    let storagePath;
-    if (contentType.startsWith('image')) {
-      storagePath = `images/${uid}/${new Date().getTime()}.${extension}`;
-    } else if (contentType.startsWith('video')) {
-      storagePath = `videos/${uid}/${new Date().getTime()}.${extension}`;
-    } else if (contentType.startsWith('application')) {
-      storagePath = `documents/${uid}/${new Date().getTime()}.${extension}`;
-    } else {
-      throw new Error('Unsupported content type');
-    }
+//     const extension = file.split('.').pop(); // Lấy phần mở rộng của file
+//     let storagePath;
+//     if (contentType.startsWith('image')) {
+//       storagePath = `images/${uid}/${new Date().getTime()}.${extension}`;
+//     } else if (contentType.startsWith('video')) {
+//       storagePath = `videos/${uid}/${new Date().getTime()}.${extension}`;
+//     } else if (contentType.startsWith('application')) {
+//       storagePath = `documents/${uid}/${new Date().getTime()}.${extension}`;
+//     } else {
+//       throw new Error('Unsupported content type');
+//     }
   
-    const storageRef = ref(storage, storagePath);
-    await uploadBytes(storageRef, blob);
-    console.log("Upload complete");
+//     const storageRef = ref(storage, storagePath);
+//     await uploadBytes(storageRef, blob);
+//     console.log("Upload complete");
   
-    const downloadURL = await getDownloadURL(storageRef);
+//     const downloadURL = await getDownloadURL(storageRef);
   
-    return downloadURL;
-  };
+//     return downloadURL;
+//   };
 
-  // const uploadImageAsync = async () => {
-  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //   if (status !== 'granted') {
-  //     alert('Permission to access camera roll is required!');
-  //     return;
-  //   }
+//   const uploadImageAsync = async () => {
+//     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+//     if (status !== 'granted') {
+//       alert('Permission to access camera roll is required!');
+//       return;
+//     }
   
-  //   try {
-  //     const result = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //       allowsEditing: false,
-  //       aspect: [4, 3],
-  //       quality: 1,
-  //       multiple: true
-  //     });
+//     try {
+//       const result = await ImagePicker.launchImageLibraryAsync({
+//         mediaTypes: ImagePicker.MediaTypeOptions.All,
+//         allowsEditing: false,
+//         aspect: [4, 3],
+//         quality: 1,
+//         multiple: true
+//       });
   
-  //     if (!result.cancelled) {
-  //       const selectedImages = result.assets.filter(image => !selectedImages.includes(image));
-  //       setSelectedImages(prevImages => [...prevImages, ...selectedImages]); // Thêm các ảnh được chọn vào trạng thái selectedImages
-  //     }
-  //   } catch (error) {
-  //     console.error('Error picking file:', error);
-  //   }
-  // };
-
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access camera roll is required!');
-      return;
-    }
-  
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: false,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      if (!result.cancelled) {
-        console.log(result);
-        const type = result.assets[0].type;
-        const text = type.startsWith('video') ? '[Video]' : '[Hình ảnh]';
-        const media = type.startsWith('video') ? 'video' : 'image';
-        onSend([{
-          _id: Math.random().toString(),
-          createdAt: new Date(),
-          user: {
-            _id: auth?.currentUser?.uid,
-            avatar: userData?.photoURL || 'default_avatar_url',
-          },
-          text: text,
-          [media]: result.assets[0].uri // Sử dụng [media] để chọn key là 'image' hoặc 'video' tùy thuộc vào loại nội dung
-        }]);
-      }
-    } catch (error) {
-      console.error('Error picking file:', error);
-    }
-  };
-
-  const pickDocument = async () => {
-    const result = await DocumentPicker.getDocumentAsync();
-    console.log(result);
-  
-    if (!result.cancelled) {
-      const uri = result.assets[0].uri;
-      console.log(uri);
-      const nameFile = result.assets[0].name;
-      console.log(nameFile);
-      const fileName = uri.split('/').pop(); // Lấy tên tệp từ đường dẫn URI
-      const message = nameFile; //'[Tài liệu]'
-      const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
-      if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
-        const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
-        onSend([
-          {
-            _id: Math.random().toString(),
-            createdAt: new Date(),
-            user: {
-              _id: auth.currentUser?.uid,
-              avatar: userData?.photoURL || 'default_avatar_url',
-            },
-            text: message,
-            document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
-          }
-        ]);
-      } else {
-        console.log("Selected file is an image or video. Please select a document.");
-      }
-    } else {
-      console.log("No document selected");
-    }
-  };
-  
-  // Hàm để lấy phần mở rộng của tên tệp
-  const getFileExtension = (fileName) => {
-    return fileName.split('.').pop().toLowerCase();
-  };
-  
-  // Hàm kiểm tra xem phần mở rộng của tên tệp có phải là hình ảnh không
-  const isImageFile = (extension) => {
-    return extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif';
-  };
-  
-  // Hàm kiểm tra xem phần mở rộng của tên tệp có phải là video không
-  const isVideoFile = (extension) => {
-    return extension === 'mp4' || extension === 'mov' || extension === 'avi' || extension === 'mkv';
-  };
-  
-  // Hàm để lấy kiểu tệp dựa trên phần mở rộng của tên tệp
-  const getFileType = (extension) => {
-    if (extension === 'pdf') {
-      return 'application/pdf';
-    } else if (extension === 'doc' || extension === 'docx') {
-      return 'application/msword';
-    } else if (extension === 'xls' || extension === 'xlsx') {
-      return 'application/vnd.ms-excel';
-    } else if (extension === 'ppt' || extension === 'pptx') {
-      return 'application/vnd.ms-powerpoint';
-    } else {
-      return 'application/octet-stream'; // Kiểu mặc định nếu không xác định được
-    }
-  };
-
-  const handleImagePress = (imageUri) => {
-    navigation.navigate('PlayVideo', { uri: imageUri });
-    console.log(imageUri);
-  };
-
-  
-  const handleVideoPress = (videoUri) => {
-    navigation.navigate('PlayVideo', { uri: videoUri });
-    console.log(videoUri);
-  };
-
-  const handleDocumentPress =  (documentInfo) => {
-    console.log(documentInfo)
-  };
+//       if (!result.cancelled) {
+//         const selectedImages = result.assets.filter(image => !selectedImages.includes(image));
+//         setSelectedImages(prevImages => [...prevImages, ...selectedImages]); // Thêm các ảnh được chọn vào trạng thái selectedImages
+//       }
+//     } catch (error) {
+//       console.error('Error picking file:', error);
+//     }
+//   };
 
   const fetchUserName = async (uid) => {
     try {
@@ -465,6 +350,211 @@ const GroupChat = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+  ////////////////////////////////
+  ///// bắt đầu đổi từ đây
+
+  const onSend = useCallback(async (messages = []) => {
+    const messageToSend = messages[0];
+    if (!messageToSend) {
+      return;
+    }
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, messages)
+    );
+  
+    const { _id, createdAt, text, user, image, video, document } = messageToSend;
+    const chatRoomId = [auth.currentUser?.uid, friends?.UID].sort().join('_');
+    const chatMessRef = collection(db, 'Chats', chatRoomId, 'chat_mess');
+  
+    try {
+      let imageDownloadURL = null;
+      let videoDownloadURL = null;
+      let documentDownloadURL = null;
+      let imageContentType = null;
+      let videoContentType = null;
+      let documentContentType = null;
+  
+      if (image) {
+        imageContentType = 'image/jpeg'; // assuming image is always jpeg for simplicity
+        imageDownloadURL = await uploadFileToFirebaseStorage(image, auth.currentUser?.uid, imageContentType);
+      }
+  
+      if (video) {
+        videoContentType = 'video/mp4'; // assuming video is always mp4 for simplicity
+        videoDownloadURL = await uploadFileToFirebaseStorage(video, auth.currentUser?.uid, videoContentType);
+      }
+  
+      if (document) {
+        documentContentType = getFileType(document.fileName); // assuming you have a function getFileType to determine content type
+        documentDownloadURL = await uploadFileToFirebaseStorage(document.uri, auth.currentUser?.uid, documentContentType);
+      }
+  
+      addDoc(chatMessRef, {
+        _id,
+        createdAt,
+        text: text || '',
+        user,
+        image: imageDownloadURL,
+        video: videoDownloadURL,
+        document: documentDownloadURL,
+        imageContentType,
+        videoContentType,
+        documentContentType
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  }, [db, auth.currentUser?.uid, friends?.UID]);
+  
+  const uploadFileToFirebaseStorage = async (file, uid, contentType) => {
+    const response = await fetch(file);
+    const blob = await response.blob();
+  
+    const extension = file.split('.').pop(); // Lấy phần mở rộng của file
+    let storagePath;
+    if (contentType.startsWith('image')) {
+      storagePath = `images/${uid}/${new Date().getTime()}.${extension}`;
+    } else if (contentType.startsWith('video')) {
+      storagePath = `videos/${uid}/${new Date().getTime()}.${extension}`;
+    } else if (contentType.startsWith('application')) {
+      storagePath = `documents/${uid}/${new Date().getTime()}.${extension}`;
+    } else {
+      throw new Error('Unsupported content type');
+    }
+  
+    const storageRef = ref(storage, storagePath);
+    await uploadBytes(storageRef, blob);
+    console.log("Upload complete");
+  
+    const downloadURL = await getDownloadURL(storageRef);
+  
+    return downloadURL;
+  };
+  
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+  
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: false,
+        aspect: [4, 3],
+        quality: 1,
+      });
+  
+      if (!result.cancelled) {
+        console.log(result);
+        const type = result.assets[0].type;
+        const text = type.startsWith('video') ? '[Video]' : '[Hình ảnh]';
+        const media = type.startsWith('video') ? 'video' : 'image';
+        onSend([{
+          _id: Math.random().toString(),
+          createdAt: new Date(),
+          user: {
+            _id: auth?.currentUser?.uid,
+            avatar: userData?.photoURL || 'default_avatar_url',
+          },
+          text: text,
+          [media]: result.assets[0].uri // Sử dụng [media] để chọn key là 'image' hoặc 'video' tùy thuộc vào loại nội dung
+        }]);
+      }
+    } catch (error) {
+      console.error('Error picking file:', error);
+    }
+  };
+  
+  const pickDocument = async () => {
+    const result = await DocumentPicker.getDocumentAsync();
+    console.log(result);
+  
+    if (!result.cancelled) {
+      const uri = result.assets[0].uri;
+      console.log(uri);
+      const nameFile = result.assets[0].name;
+      console.log(nameFile);
+      const fileName = uri.split('/').pop(); // Lấy tên tệp từ đường dẫn URI
+      const message = nameFile; //'[Tài liệu]'
+      const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
+      if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
+        const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
+        onSend([
+          {
+            _id: Math.random().toString(),
+            createdAt: new Date(),
+            user: {
+              _id: auth.currentUser?.uid,
+              avatar: userData?.photoURL || 'default_avatar_url',
+            },
+            text: message,
+            document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
+          }
+        ]);
+      } else {
+        console.log("Selected file is an image or video. Please select a document.");
+      }
+    } else {
+      console.log("No document selected");
+    }
+  };
+  
+  // Hàm để lấy phần mở rộng của tên tệp
+  const getFileExtension = (fileName) => {
+    return fileName.split('.').pop().toLowerCase();
+  };
+  
+  // Hàm kiểm tra xem phần mở rộng của tên tệp có phải là hình ảnh không
+  const isImageFile = (extension) => {
+    return extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif';
+  };
+  
+  // Hàm kiểm tra xem phần mở rộng của tên tệp có phải là video không
+  const isVideoFile = (extension) => {
+    return extension === 'mp4' || extension === 'mov' || extension === 'avi' || extension === 'mkv';
+  };
+  
+  // Hàm để lấy kiểu tệp dựa trên phần mở rộng của tên tệp
+  const getFileType = (extension) => {
+    if (extension === 'pdf') {
+      return 'application/pdf';
+    } else if (extension === 'doc' || extension === 'docx') {
+      return 'application/msword';
+    } else if (extension === 'xls' || extension === 'xlsx') {
+      return 'application/vnd.ms-excel';
+    } else if (extension === 'ppt' || extension === 'pptx') {
+      return 'application/vnd.ms-powerpoint';
+    } else {
+      return 'application/octet-stream'; // Kiểu mặc định nếu không xác định được
+    }
+  };
+  
+  const handleImagePress = (imageUri) => {
+    navigation.navigate('PlayVideo', { uri: imageUri });
+    console.log(imageUri);
+  };
+
+  
+  const handleVideoPress = (videoUri) => {
+    navigation.navigate('PlayVideo', { uri: videoUri });
+    console.log(videoUri);
+  };
+
+  const handleDocumentPress =  (documentInfo) => {
+    console.log(documentInfo)
+  };
+  
+  const renderCustomActions = (props) => {
+    return (
+      <View style={styles.customActionsContainer}>
+        {/* <Icon name="document-attach" size={25} color="black" style={styles.icon} onPress={pickImage} /> */}
+        <Icon1 name="photo-video" size={25} color="black" style={styles.icon} onPress={pickImage} />
+        <Icon1 name="file-alt" size={25} color="black" style={styles.icon} onPress={pickDocument} />
+    </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -525,19 +615,22 @@ const GroupChat = () => {
         <View ref={messagesEndRef} />
       </View>
       </ScrollView>
-      <View style={styles.inputContainer}>
-        <Icon1 name="photo-video" size={25} color="black" style={styles.icon} onPress={pickImage}/>
-        <Icon1 name="file-alt" size={25} color="black" style={styles.icon} onPress={pickDocument} />
+      {/* <View style={styles.inputContainer}>
         <TextInput 
           style={styles.input} 
           placeholder="Nhập tin nhắn..." 
           value={messageInput} 
           onChangeText={(text) => setMessageInput(text)} 
         />
-        <Pressable style={styles.nutgui} onPress={sendMessage} >
-          <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center'}}>Gửi</Text>
-        </Pressable>
-      </View>
+        <Button title="Gửi" onPress={sendMessage} />
+      </View> */}
+      <GiftedChat
+        messages={messages}
+        placeholder="Tin nhắn"
+        //onSend={messages => onSend(messages)}
+        sendMessage={messages => sendMessage(messages)}
+        renderActions={renderCustomActions}
+        />
     </View>
   );
 };
@@ -606,10 +699,9 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   chatImage: {
-    width: 50,
-    height: 50,
+    width: 200,
+    height: 200,
     borderRadius: 10,
-    resizeMode: 'cover',
   },
   chatVideo: {
     width: 200,
@@ -631,16 +723,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 10,
+    borderWidth: 1,
     borderColor: "#ccc",
-  },
-  nutgui: {
-    marginRight: 10,
-    backgroundColor: '#418df8',
-    borderRadius: 10,
-    height: 35,
-    width: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 5,
   },
   //
   //
@@ -654,7 +739,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupChat;
+export default ChatNhom;
 
 
 

@@ -224,7 +224,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Pressable, TextInput, Image, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
@@ -259,20 +259,21 @@ const DanhSachNhom = () => {
     fetchGroups();
   }, [db]); // Thêm db vào dependency array để useEffect chạy lại khi db thay đổi
 
-  const handleGroupClick = async (groupId) => {
-    try {
-        const groupRef = doc(db, 'groups', groupId); // Sử dụng biến db đã khởi tạo
-        const groupDoc = await getDoc(groupRef);
-        const groupData = groupDoc.data();
-        // if (groupData.members.includes(currentUserUid)) {
-            setCurrentGroup(groupId);
-            setShowChat(true);
-        // } else {
-        //     console.log('Bạn không có quyền truy cập vào nhóm này');
-        // }
-    } catch (error) {
-        console.error('Error checking group access:', error);
-    }
+  // const handleGroupClick = async (groupId) => {
+  //   try {
+  //       const groupRef = doc(db, 'groups', groupId); // Sử dụng biến db đã khởi tạo
+  //       const groupDoc = await getDoc(groupRef);
+  //       const groupData = groupDoc.data();
+  //       setCurrentGroup(groupId);
+  //       setShowChat(true);
+  //     } catch (error) {
+  //       console.error('Error checking group access:', error);
+  //   }
+  // };
+
+  const handleGroupClick = (groupId) => {
+    navigation.navigate('GroupChat', { groupId });
+    // navigation.navigate('ChatNhom', { groupId });
   };
 
   return (
@@ -282,12 +283,13 @@ const DanhSachNhom = () => {
         data={nhom}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleGroupClick(item.id)} style={styles.groupItem}>
-            <Text><Text style={styles.groupName}>{item.groupName}</Text> - Thành viên: {item.members.length}</Text>
+            {/* <Text><Text style={styles.groupName}>{item.groupName}</Text> - Thành viên: {item.members.length}</Text> */}
+            <Text><Text style={styles.groupName}>{item.name}</Text> - Thành viên: {item.members.length}</Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
       />
-      {showChat && currentGroup && <View style={styles.showChat}><GroupChat groupId={currentGroup} currentUserUid={currentUserUid} /></View>}
+      {/* {showChat && currentGroup && <View style={styles.showChat}><GroupChat groupId={currentGroup} currentUserUid={currentUserUid} /></View>} */}
     </View>
   );
 };
@@ -312,7 +314,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   showChat: {
-    flex: 1,
+    flex: 40,
+  },
+  image: {
+    width: 60,
+    height: 60,
+    resizeMode: 'cover',
+    borderRadius: 30,
   },
 });
 

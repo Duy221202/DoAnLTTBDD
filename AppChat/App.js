@@ -12,9 +12,8 @@ import Profile from "./src/Screen/Tab/Profile";
 import CaiDat from "./src/Screen/CaiDat/CaiDat";
 
 import TimKiem_BanBe from "./src/Screen/Tab_DanhBa/TimKiem_BanBe";
+import TimKiem_Chat from "./src/Screen/Tab_DanhBa/TimKiem_Chat";
 import LoiMoiKetBan from "./src/Screen/Tab_DanhBa/LoiMoiKetBan";
-
-import DoanChat from "./src/Screen/Chat/DoanChat";
 
 import BanBe from "./src/Screen/Tab_DanhBa/BanBe";
 import Chat from "./src/Screen/Chat/Chat";
@@ -23,15 +22,14 @@ import Chat_fr from "./src/Screen/Chat/Chat_fr";
 import ThongTin from "./src/Screen/User/ThongTin";
 
 import DangKy from "./src/Screen/DangKy/DangKy";
-import OptionsMenu from "./src/Screen/Chat/OptionsMenu ";
 import PlayVideo from "./src/Screen/Chat/PlayVideo";
-
-import TaoNhom from "./src/Screen/Group/TaoNhom";
 
 import GroupChat from "./src/Screen/Chat/GroupChat";
 import NhomDuy from "./src/Screen/Tab_DanhBa/NhomDuy";
 import TaoNhomDuy from "./src/Screen/Tab_DanhBa/TaoNhomDuy";
 import DanhSachNhom from "./src/Screen/Tab_DanhBa/DanhSachNhom";
+
+import ChatNhom from "./src/Screen/Chat/ChatNhom";
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -43,10 +41,11 @@ const App = () => {
         <Stack.Screen name="MyTabs" component={MyTabs} />
         <Stack.Screen name="ThongTinUser" component={ThongTinUser} />
         <Stack.Screen name="DangKyMail" component={DangKyMail} />
-        <Stack.Screen name="DatTenUser" component={DatTenUser} />
+        {/* <Stack.Screen name="DatTenUser" component={DatTenUser} /> */}
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="CaiDat" component={CaiDat} />
         <Stack.Screen name="TimKiem_BanBe" component={TimKiem_BanBe} />
+        <Stack.Screen name="TimKiem_Chat" component={TimKiem_Chat} />
         <Stack.Screen name="LoiMoiKetBan" component={LoiMoiKetBan} />
         
         <Stack.Screen name="Quenmatkhau" component={Quenmatkhau} />
@@ -57,19 +56,16 @@ const App = () => {
 
         <Stack.Screen name="ThongTin" component={ThongTin} />
 
-        <Stack.Screen name="DoanChat" component={DoanChat} />
         <Stack.Screen name="DangKy" component={DangKy} />
 
-        {/* <Stack.Screen name="OptionsMenu" component={OptionsMenu} /> */}
-
         <Stack.Screen name="PlayVideo" component={PlayVideo} />
-
-        <Stack.Screen name="TaoNhom" component={TaoNhom} />
 
         <Stack.Screen name="GroupChat" component={GroupChat} />
         <Stack.Screen name="NhomDuy" component={NhomDuy} />
         <Stack.Screen name="TaoNhomDuy" component={TaoNhomDuy} />
         <Stack.Screen name="DanhSachNhom" component={DanhSachNhom} />
+
+        <Stack.Screen name="ChatNhom" component={ChatNhom} />
         
       </Stack.Navigator>
     </NavigationContainer>

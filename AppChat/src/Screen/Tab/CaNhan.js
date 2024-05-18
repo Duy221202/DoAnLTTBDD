@@ -9,16 +9,72 @@ import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 const CaNhan = () => {
   const navigation = useNavigation();
   const firestore = getFirestore();
-  const [displayName, setDisplayName] = useState('');
+  //const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
   const [photoURL, setPhotoURL] = useState(null);
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     if (user) {
+  //       //setDisplayName(user.displayName);
+  //       setName(user.name);
+  //       fetchPhotoURL(user.uid);
+  //     } else {
+  //       //setDisplayName('');
+  //       setName('');
+  //       setPhotoURL(null);
+  //     }
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
+
+  // useEffect(() => {
+  //   // Cập nhật lại ảnh đại diện khi quay lại từ trang Profile
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     // Fetch ảnh đại diện mới từ Firestore hoặc từ state nếu đã cập nhật
+  //     if (auth.currentUser) {
+  //       fetchPhotoURL(auth.currentUser.uid);
+  //     }
+  //   });
+
+  //   return unsubscribe;
+  // }, [navigation]);
+
+  // // Method hiện thị ảnh cá nhân
+  // const fetchPhotoURL = async (userId) => {
+  //   try {
+  //     const userRef = doc(firestore, 'users', userId);
+  //     const docSnap = await getDoc(userRef);
+  //     if (docSnap.exists()) {
+  //       const userData = docSnap.data();
+  //       setPhotoURL(userData.photoURL);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching photo URL: ", error);
+  //   }
+  // };
+
+  const fetchUserInfo = async (userId) => {
+    try {
+      const userRef = doc(firestore, 'users', userId);
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setName(userData.name);
+        setPhotoURL(userData.photoURL);
+      }
+    } catch (error) {
+      console.error("Error fetching user info: ", error);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setDisplayName(user.displayName);
-        fetchPhotoURL(user.uid);
+        fetchUserInfo(user.uid);
       } else {
-        setDisplayName('');
+        setName('');
         setPhotoURL(null);
       }
     });
@@ -27,30 +83,14 @@ const CaNhan = () => {
   }, []);
 
   useEffect(() => {
-    // Cập nhật lại ảnh đại diện khi quay lại từ trang Profile
     const unsubscribe = navigation.addListener('focus', () => {
-      // Fetch ảnh đại diện mới từ Firestore hoặc từ state nếu đã cập nhật
       if (auth.currentUser) {
-        fetchPhotoURL(auth.currentUser.uid);
+        fetchUserInfo(auth.currentUser.uid);
       }
     });
 
     return unsubscribe;
   }, [navigation]);
-
-  // Method hiện thị ảnh cá nhân
-  const fetchPhotoURL = async (userId) => {
-    try {
-      const userRef = doc(firestore, 'users', userId);
-      const docSnap = await getDoc(userRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setPhotoURL(userData.photoURL);
-      }
-    } catch (error) {
-      console.error("Error fetching photo URL: ", error);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,7 +123,8 @@ const CaNhan = () => {
           )}
 
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>{displayName}</Text>
+            {/* <Text style={styles.userName}>{displayName}</Text> */}
+            <Text style={styles.userName}>{name}</Text>
             <Text style={styles.userMessage}>Xem trang cá nhân</Text>
           </View>
         </Pressable>

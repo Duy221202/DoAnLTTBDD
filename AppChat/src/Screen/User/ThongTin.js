@@ -6,33 +6,44 @@ import { auth } from "../../../config/firebase";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 const ThongTin = () => {
+  const user = auth.currentUser;
   const navigation = useNavigation();
   const firestore = getFirestore();
-  const [displayName, setDisplayName] = useState('');
+  //const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
   const [photoURL, setPhotoURL] = useState(null);
 
   const [gender, setGender] = useState('');
-  const [birthDate, setBirthDate] = useState('');
+  //const [birthDate, setBirthDate] = useState('');
+  const [dateOfBirth, setdateOfBirth] = useState('');
   const [email, setEmail] = useState('');
+  //const [newEmail, setNewEmail] = useState(""); 
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState('');
-  const [editedBirthDate, setEditedBirthDate] = useState('');
+  //const [editedBirthDate, setEditedBirthDate] = useState('');
+  const [editeddateOfBirth, setEditeddateOfBirth] = useState('');
   const [editedGender, setEditedGender] = useState('');
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    //const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = async () => {
       if (user) {
-        setDisplayName(user.displayName);
+        // setDisplayName(user.displayName);
+        // setName(user.name);
         fetchPhotoURL(user.uid);
       } else {
-        setDisplayName('');
+        //setDisplayName('');
+        setName('');
         setPhotoURL(null);
         setGender('');
-        setBirthDate('');
+        //setBirthDate('');
+        setdateOfBirth('');
         setEmail('');
+        //setNewEmail('');
       }
-    });
+    // });
+  };
 
     return unsubscribe;
   }, []);
@@ -56,10 +67,13 @@ const ThongTin = () => {
       const docSnap = await getDoc(userRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
+        setName(userData.name); // Đặt giá trị cho name thay vì displayName
         setPhotoURL(userData.photoURL);
         setGender(userData.gender || ''); // Sử dụng giới tính nếu có, nếu không thì để trống
-        setBirthDate(userData.birthDate || ''); // Sử dụng ngày sinh nếu có, nếu không thì để trống
-        setEmail(userData.userId); // Sử dụng email người dùng
+        //setBirthDate(userData.birthDate || ''); // Sử dụng ngày sinh nếu có, nếu không thì để trống
+        setdateOfBirth(userData.dateOfBirth || ''); // Sử dụng ngày sinh nếu có, nếu không thì để trống
+        setEmail(userData.email); // Sử dụng email người dùng
+        //setNewEmail(userData.email); // Sử dụng email người dùng
       }
     } catch (error) {
       console.error("Error fetching photo URL: ", error);
@@ -84,11 +98,14 @@ const ThongTin = () => {
       await setDoc(userRef, {
         name: editedName,
         gender: editedGender,
-        birthDate: editedBirthDate
+        //birthDate: editedBirthDate
+        dateOfBirth: editeddateOfBirth
       }, { merge: true });
-      setDisplayName(editedName);
+      //setDisplayName(editedName);
+      setName(editedName);
       setGender(editedGender);
-      setBirthDate(editedBirthDate);
+      //setBirthDate(editedBirthDate);
+      setdateOfBirth(editeddateOfBirth);
     } catch (error) {
       console.error("Error updating user profile: ", error);
       throw error;
@@ -114,7 +131,8 @@ const ThongTin = () => {
           )}
 
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>{displayName}</Text>
+            {/* <Text style={styles.userName}>{displayName}</Text> */}
+            <Text style={styles.userName}>{name}</Text>
           </View>
         </Pressable>
 
@@ -145,8 +163,10 @@ const ThongTin = () => {
         </View>
               <TextInput
                 style={styles.input}
-                value={editedBirthDate}
-                onChangeText={setEditedBirthDate}
+                //value={editedBirthDate}
+                //onChangeText={setEditedBirthDate}
+                value={editeddateOfBirth}
+                onChangeText={setEditeddateOfBirth}
                 placeholder="Ngày sinh"
               />
               <TextInput
@@ -167,13 +187,15 @@ const ThongTin = () => {
             <View style={styles.separator1} />
             <View style={styles.row}>
               <Text style={styles.label}>Ngày sinh:</Text>
-              <Text style={styles.data}>{birthDate}</Text>
+              {/* <Text style={styles.data}>{birthDate}</Text> */}
+              <Text style={styles.data}>{dateOfBirth}</Text>
             </View>
             
             <View style={styles.separator1} />
             <View style={styles.row}>
               <Text style={styles.label}>Email:</Text>
               <Text style={styles.data}>{email}</Text>
+              {/* <Text style={styles.data}>{newEmail}</Text> */}
             </View>
             <View style={styles.separator1} />
           </View>

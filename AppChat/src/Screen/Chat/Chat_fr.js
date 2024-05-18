@@ -14,11 +14,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import { deleteDoc, updateDoc } from 'firebase/firestore';
+import Modal from "react-native-modal";
 
 const Chat_fr = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { friendData } = route.params;
+  //const { friendData } = route.params;
+  const { friends } = route.params;
   const [messages, setMessages] = useState([]);
   const auth = getAuth();
   const user = auth.currentUser;
@@ -26,20 +28,28 @@ const Chat_fr = () => {
   const storage = getStorage();
   const [userData, setUserData] = useState(null);
 
-  const [selectedMessage, setSelectedMessage] = useState(null);
-
   const [selectedMessageId, setSelectedMessageId] = useState(null);
-  const handleMessagePress = (messageId) => {
-    // setSelectedMessageId(messageId);
-    setSelectedMessageId(prevId => prevId === messageId ? null : messageId);
+  const [selectedMessageUserId, setSelectedMessageUserId] = useState(null);
+  const handleMessagePress = (messageId, userId) => {
+    setSelectedMessageId(messageId);
+    setSelectedMessageUserId(userId);
+    toggleLogoutModal();
+  };
+  // Khi chọn tùy chọn "Thu hồi" trong modal
+  const handleRecallPress = () => {
+    recallMessage(selectedMessageId, selectedMessageUserId);
+    toggleLogoutModal();
   };
 
-  const [showOptions, setShowOptions] = useState(false);
-
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  const toggleLogoutModal = () => {
+    setIsLogoutModalVisible(!isLogoutModalVisible);
   };
-  
+
+  const nutBam = () => {
+    toggleLogoutModal();
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -48,7 +58,7 @@ const Chat_fr = () => {
         const userData = userDocSnap.data();
         if (userDocSnap.exists()) {
           console.log('User data:', userData.name);
-          console.log('User friend', friendData.name);
+          console.log('User friend', friends.name);
           setUserData(userData);
         } else {
           console.log('User not found');
@@ -63,7 +73,7 @@ const Chat_fr = () => {
   useEffect(() => {
     const fetchChatMessages = async () => {
       try {
-        const chatRoomId = [userData?.UID, friendData?.UID].sort().join('_');
+        const chatRoomId = [userData?.UID, friends?.UID].sort().join('_');
         const chatMessRef = collection(db, 'Chats', chatRoomId, 'chat_mess');
         const q = query(chatMessRef, orderBy('createdAt', 'desc'));
         const unsubscribe = onSnapshot(q, snapshot => {
@@ -94,7 +104,7 @@ const Chat_fr = () => {
         unsubscribe();
       }
     };
-  }, [db, userData?.UID, friendData?.UID]);
+  }, [db, userData?.UID, friends?.UID]);
 
   const onSend = useCallback(async (messages = []) => {
     const messageToSend = messages[0];
@@ -106,7 +116,7 @@ const Chat_fr = () => {
     );
   
     const { _id, createdAt, text, user, image, video, document } = messageToSend;
-    const chatRoomId = [auth.currentUser?.uid, friendData?.UID].sort().join('_');
+    const chatRoomId = [auth.currentUser?.uid, friends?.UID].sort().join('_');
     const chatMessRef = collection(db, 'Chats', chatRoomId, 'chat_mess');
   
     try {
@@ -147,7 +157,7 @@ const Chat_fr = () => {
     } catch (error) {
       console.error('Error sending message:', error);
     }
-  }, [db, auth.currentUser?.uid, friendData?.UID]);
+  }, [db, auth.currentUser?.uid, friends?.UID]);
   
   
 
@@ -324,7 +334,7 @@ const Chat_fr = () => {
       if (!messageId) return;
   
       const db = getFirestore();
-      const chatRoomId = [auth.currentUser?.uid, friendData?.UID].sort().join('_');
+      const chatRoomId = [auth.currentUser?.uid, friends?.UID].sort().join('_');
       const messagesRef = collection(db, "Chats", chatRoomId, 'chat_mess');
   
       // Kiểm tra xem người gửi tin nhắn có phải là người dùng hiện tại hay không
@@ -342,22 +352,23 @@ const Chat_fr = () => {
     } catch (error) {
       console.error("Lỗi khi xóa tin nhắn:", error);
     }
+    toggleLogoutModal();
   };
 
   // Nút xóa tin nhắn chỉ mình tôi
-  // const deleteMessage = async (messageId) => {
+  // const deleteMessage = async (messageId, userId) => {
   //   try {
   //     if (!messageId) return;
   
-  //     // Đảm bảo auth đã được import từ thư viện phù hợp và là một đối tượng có thể truy cập
-  //     const user = auth?.currentUser;
-  //     if (!user) {
-  //       console.error("Người dùng không được xác định.");
-  //       return;
-  //     }
+  //     // // Đảm bảo auth đã được import từ thư viện phù hợp và là một đối tượng có thể truy cập
+  //     // const user = auth?.currentUser;
+  //     // if (!user) {
+  //     //   console.error("Người dùng không được xác định.");
+  //     //   return;
+  //     // }
   
   //     const db = getFirestore();
-  //     const chatRoomId = [user.uid, friendData?.UID].sort().join('_');
+  //     const chatRoomId = [user.uid, friends?.UID].sort().join('_');
   //     const messagesRef = collection(db, "Chats", chatRoomId, 'chat_mess');
   
   //     // Cập nhật trường isDeleted của tin nhắn để đánh dấu nó đã bị xóa
@@ -365,13 +376,64 @@ const Chat_fr = () => {
   //     await updateDoc(messageDocRef, {
   //       isDeleted: true // Đánh dấu tin nhắn đã bị xóa
   //     });
-  
+  //     Alert.alert("Xóa thành công")
   //     console.log("Đã xóa tin nhắn");
   //   } catch (error) {
   //     console.error("Lỗi khi xóa tin nhắn:", error);
   //   }
   // };
 
+  // Hàm xóa tin nhắn chỉ mình tôi 
+  const deleteMessage = async (messageId, userId) => {
+    try {
+      // if (!messageId || !userId) return;
+      if (!messageId) return;
+      const db = getFirestore();
+      const chatRoomId = [user.uid, friends?.UID].sort().join('_');
+      const messagesRef = collection(db, "Chats", chatRoomId, 'chat_mess');
+
+      // // Kiểm tra xem người dùng hiện tại có phải là người gửi tin nhắn hay không
+      // const messageDoc = await getDoc(doc(messagesRef, messageId));
+      // const messageData = messageDoc.data();
+      // if (messageData.senderId === userId) {
+      //   // // Xóa tin nhắn từ cơ sở dữ liệu
+      //   // await deleteDoc(doc(messagesRef, messageId));
+
+      //   // Cập nhật trạng thái của tin nhắn thành đã xóa (ví dụ: đã xóa = true)
+      //   await updateDoc(doc(messagesRef, messageId), { deletedBySender: true });
+      //   console.log("Đã xóa tin nhắn");
+
+      // Kiểm tra xem người gửi tin nhắn có phải là người dùng hiện tại hay không
+      if (userId === auth.currentUser?.uid) {
+        const messagesDocRef = doc(messagesRef, messageId);
+        // await updateDoc(messagesDocRef, {
+        //   text: "Đã xóa tin nhắn",
+        // });
+
+        await deleteDoc(messagesDocRef);
+        console.log("Đã xóa tin nhắn");
+      } else {
+        Alert.alert("Bạn không có quyền xóa tin nhắn này")
+        console.log("Bạn không có quyền xóa tin nhắn này");
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa tin nhắn:", error);
+    }
+  };
+  // Hàm xử lý khi người dùng nhấn nút "Xóa" trong modal
+  const handleDeletePress = () => {
+    // if (selectedMessageId && selectedMessageUserId) {
+    //   // Gọi hàm xóa tin nhắn với selectedMessageId và selectedMessageUserId
+    //   deleteMessage(selectedMessageId, selectedMessageUserId);
+    // }
+    // // Đóng modal sau khi xử lý xong
+    // toggleLogoutModal();
+
+    deleteMessage(selectedMessageId, selectedMessageUserId);
+    toggleLogoutModal();
+  };
+
+  
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -379,7 +441,7 @@ const Chat_fr = () => {
         <Pressable onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={20} color="white" />
         </Pressable>
-        <Text style={styles.userName}>{friendData.name}</Text>
+        <Text style={styles.userName}>{friends.name}</Text>
         <View style={styles.iconContainer}>
           <Pressable>
             <Icon name="call" size={22} color="white" style={styles.icon} />
@@ -425,7 +487,7 @@ const Chat_fr = () => {
                 <View style={{ flexDirection: 'column' }}>
                   {isFirstMessage && !isCurrentUser && props.currentMessage.user && (
                     <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>
-                      {friendData.name}
+                      {friends.name}
                     </Text>
                   )}
                   <View style={{ backgroundColor: isCurrentUser ? '#008DDA' : '#41C9E2', padding: 5, borderRadius: 10, maxWidth: 230, marginLeft: isFirstMessage ? 0 : 40, marginRight: isFirstMessage ? 10 : 0, marginTop: isFirstMessage ? 5 : 0 }}>
@@ -464,7 +526,7 @@ const Chat_fr = () => {
                     ) : (
                       <>
                         <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                          <TouchableOpacity style={styles.optionsBtn} onPress={() => handleMessagePress(props.currentMessage._id)}>
+                          <TouchableOpacity style={styles.optionsBtn} onPress={() => handleMessagePress(props.currentMessage._id, props.currentMessage.user._id)}>
                             <Text style={{ fontSize: 16, margin: 5 }}>{props.currentMessage.text}</Text>
                             <Text style={{ fontSize: 12, marginTop: 5, color: 'black', marginLeft: 5 }}>
                               {`${props.currentMessage.createdAt.getHours()}:${props.currentMessage.createdAt.getMinutes()}`}
@@ -472,12 +534,12 @@ const Chat_fr = () => {
                           </TouchableOpacity>
 
                           {/* Nút thu hồi tin nhắn */}
-                          {props.currentMessage._id === selectedMessageId && (
+                          {/* {props.currentMessage._id === selectedMessageId && (
                             <TouchableOpacity onPress={() => recallMessage(props.currentMessage._id, props.currentMessage.user._id)} style={styles.optionItemTest}>
                               <Icon2 name="undo" style={styles.optionIcon} />
                               <Text>Thu hồi</Text>
                             </TouchableOpacity>
-                          )}
+                          )} */}
 
                           {/* Nút xóa chỉ mình tôi */}
                           {/* {props.currentMessage.user._id === auth?.currentUser?.uid && (
@@ -499,7 +561,37 @@ const Chat_fr = () => {
           );
         }}
       />
-      
+      {/* Modal Logout */}
+      <Modal isVisible={isLogoutModalVisible} onBackdropPress={toggleLogoutModal}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>
+            Chọn các option sau
+          </Text>
+
+          <View style={styles.modalButtonContainer}>
+            {/* <Pressable style={styles.modalButton} onPress={recallMessage}>
+              <Icon2 name="undo" style={[styles.optionIcon, { color: "orange" }]} />
+              <Text>Thu hồi</Text>
+            </Pressable> */}
+            <Pressable style={styles.modalButton} onPress={handleRecallPress}>
+              <Icon2 name="undo" style={[styles.optionIcon, { color: "orange" }]} />
+              <Text>Thu hồi</Text>
+            </Pressable>
+            <Pressable style={styles.modalButton} onPress={handleDeletePress}>
+              <Icon2 name="trash" style={[styles.optionIcon, { color: "red" }]} />
+              <Text>Xóa</Text>
+            </Pressable>
+            <Pressable style={styles.modalButton} onPress={nutBam}>
+              <Icon2 name="share" style={[styles.optionIcon, { color: "blue" }]} />
+              <Text style={{ textAlign: 'center' }}>Chuyển tiếp</Text>
+            </Pressable>
+            <Pressable style={styles.modalButton} onPress={nutBam}>
+              <Icon2 name="reply" style={[styles.optionIcon, { color: "purple" }]} />
+              <Text>Trả lời</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   </View>
   );
@@ -543,17 +635,17 @@ const styles = StyleSheet.create({
   // action sheet
   optionsBtn: {
     flexDirection: 'column',
-    backgroundColor: '#007bff',
+    //backgroundColor: '#007bff',
     borderRadius: 5,
   },
-  optionsMenu: {
-    top: 10,
-    flexDirection: 'row',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
-    padding: 5,
-    elevation: 10,
-  },
+  // optionsMenu: {
+  //   top: 10,
+  //   flexDirection: 'row',
+  //   backgroundColor: '#f9f9f9',
+  //   borderRadius: 5,
+  //   padding: 5,
+  //   elevation: 10,
+  // },
   optionItem: {
     alignItems: 'center',
     paddingHorizontal: 10,
@@ -562,14 +654,40 @@ const styles = StyleSheet.create({
   optionIcon: {
     fontSize: 15,
     paddingVertical: 5,
-    color: "red",
+    //color: "red",
   },
   optionItemTest: {
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 5,
     flexDirection: 'column',
-  }
+  },
+  // Modal
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 15, 
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row', 
+    //alignItems: 'center',
+    justifyContent: 'center',
+    width: '45%', 
+  },
+  modalButton: {
+    //backgroundColor: '#007bff',
+    alignItems: 'center',
+    marginLeft: 5,
+    borderRadius: 25,
+    marginVertical: 15,
+    width: '55%', // Định kích thước của các nút
+  },
 });
 
 export default Chat_fr;

@@ -11,7 +11,8 @@ import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 function ThongTinUser() {
   const navigation = useNavigation();
-  const [displayName, setDisplayName] = useState('');
+  //const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
   const [photoURL, setPhotoURL] = useState(null);
   const auth = getAuth();
   const firestore = getFirestore();
@@ -28,10 +29,12 @@ function ThongTinUser() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setDisplayName(user.displayName);
+        //setDisplayName(user.displayName);
+        //setName(user.name);
         fetchPhotoURL(user.uid);
       } else {
-        setDisplayName('');
+        //setDisplayName('');
+        setName('');
         setPhotoURL(null);
         setGender('');
         setBirthDate('');
@@ -49,6 +52,7 @@ function ThongTinUser() {
       const docSnap = await getDoc(userRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
+        setName(userData.name); // Đặt giá trị cho name thay vì displayName
         setPhotoURL(userData.photoURL);
         setGender(userData.gender || ''); // Sử dụng giới tính nếu có, nếu không thì để trống
         setBirthDate(userData.birthDate || ''); // Sử dụng ngày sinh nếu có, nếu không thì để trống
@@ -194,7 +198,8 @@ const updateUserProfile = async () => {
       gender: editedGender,
       birthDate: editedBirthDate
     }, { merge: true });
-    setDisplayName(editedName);
+    //setDisplayName(editedName);
+    setName(editedName);
     setGender(editedGender);
     setBirthDate(editedBirthDate);
   } catch (error) {
@@ -243,8 +248,8 @@ return (
               )}
             </TouchableOpacity>
 
-           <Text style={styles.userName}>{displayName}</Text>
-
+           {/* <Text style={styles.userName}>{displayName}</Text> */}
+           <Text style={styles.userName}>{name}</Text>
            {/* <TouchableOpacity style={styles.updateContainer}>
              <Icon name="create-outline" size={25} color="#007bff" style={styles.updateIcon} />
              <Text style={styles.updateText}>Cập nhật thông tin</Text>
@@ -321,7 +326,8 @@ return (
               style={styles.welcomeImage}
             />
 
-          <Text style={styles.texttt}>Hôm nay {displayName} có gì vui?</Text>
+          {/* <Text style={styles.texttt}>Hôm nay {displayName} có gì vui?</Text> */}
+          <Text style={styles.texttt}>Hôm nay {name} có gì vui?</Text>
 
           <Text style={styles.texttt2}>Đây là nhật ký của bạn - Sống hết mình với đam mê </Text>
           
@@ -371,7 +377,7 @@ cutLine: {
   height: 1,
   backgroundColor: "black",
   position: "absolute",
-  top: "35%",
+  top: "30%",
 },
 avatarContainer: {
   alignItems: "center",

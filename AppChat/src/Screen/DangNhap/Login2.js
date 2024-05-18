@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   textInsdt: {
     height: 50,
-    width: 380,
+    //width: 380,
     borderColor: "gray",
     borderBottomWidth: 1,
     marginBottom: 20,

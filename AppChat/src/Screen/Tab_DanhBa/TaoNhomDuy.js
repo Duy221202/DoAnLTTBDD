@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert,ScrollView ,FlatList,SafeAreaView,Pressable,Image} from 'react-native';
-import { getFirestore, collection, addDoc, doc, getDocs, getDoc, setDoc, query, where } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, getDocs, getDoc, setDoc, query, where, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -17,6 +17,9 @@ const auth = getAuth();
 const db = getFirestore();
 const user = auth.currentUser;
 const [userGroups, setUserGroups] = useState([]);
+
+const [senders, setSenders] = useState({});
+const [selectedFriend, setSelectedFriend] = useState(null);
 
 const toggleSelectFriend = (friendId) => {
     if (selectedFriends.includes(friendId)) {
@@ -65,6 +68,7 @@ useEffect(() => {
 
     return unsubscribe;
 }, []);
+
 const fetchUserGroups = async () => {
     try {
         const userGroupsRef = collection(db, 'groups');
@@ -81,6 +85,7 @@ const fetchUserGroups = async () => {
         console.error('Error fetching user groups:', error);
     }
 };
+
 useEffect(() => {
     const fetchUserFriends = async () => {
     try {
@@ -188,56 +193,21 @@ useEffect(() => {
     return unsubscribe;
 }, []);
 
-// const handleCreateGroup = async () => {
-//     try {
-//         if (!groupName.trim()) { // Kiểm tra tên nhóm không được để trống
-//             Alert.alert('Vui lòng nhập tên nhóm');
-//             return;
-//         }
-
-//         if (selectedFriends.length < 2) { // Kiểm tra ít nhất 2 thành viên được chọn
-//             Alert.alert('Vui lòng chọn ít nhất 2 thành viên');
-//             return;
-//         }
-
-//         const groupsRef = collection(db, 'groups');
-//         const newGroupRef = await addDoc(groupsRef, {
-//             nameGroup: groupName,
-//             members: [auth.currentUser?.uid, ...selectedFriends], // Thêm thành viên đã chọn và người tạo nhóm vào danh sách thành viên
-//         });
-
-//         const groupId = newGroupRef.id; // Lấy ID của nhóm vừa tạo
-
-//         console.log('Group created successfully!');
-//         Alert.alert('Tạo nhóm thành công');
-
-//         // Lưu danh sách thành viên của nhóm vào Firestore
-//         await setDoc(doc(db, 'groups', groupId), {nameGroup: groupName, members: [auth.currentUser?.uid, ...selectedFriends] });
-
-//         setGroupName(''); // Reset the group name input
-//         setSelectedFriends([]); // Clear the selected friends
-//         // // Truyền dữ liệu nhóm qua màn hình chat
-//         // navigation.navigate("DanhSachNhom", {
-//         //     groupId: groupId,
-//         //     groupName: groupName,
-//         //     memberCount: selectedFriends.length + 1, // Số lượng thành viên của nhóm bao gồm người tạo nhóm
-//         //     // Bạn cũng có thể truyền thêm các thông tin khác về nhóm tại đây nếu cần
-//         // });
-//     } catch (error) {
-//         console.error('Error creating group:', error);
-//     }
-// };
-
 const handleCreateGroup = async () => {
     try {
         if (!groupName.trim() || selectedFriends.length === 0) {
-            Alert.alert('Vui lòng nhập tên nhóm và chọn ít nhất một thành viên');
+            Alert.alert('Vui lòng nhập tên nhóm');
+            return;
+        }
+
+        if (selectedFriends.length < 2) { // Kiểm tra ít nhất 2 thành viên được chọn
+            Alert.alert('Vui lòng chọn ít nhất 2 thành viên');
             return;
         }
 
         const groupsRef = collection(db, 'groups');
         const newGroupRef = await addDoc(groupsRef, {
-            groupName: groupName,
+            name: groupName,
             members: [auth.currentUser?.uid, ...selectedFriends], // Thêm thành viên đã chọn và người tạo nhóm vào danh sách thành viên
         });
 
@@ -283,32 +253,77 @@ const handleCreateGroup = async () => {
         console.error('Error creating group:', error);
     }
 };
-// const isFriendSelected = (user) => {
-//     return Array.isArray(selectedFriends) && selectedFriends.includes(user.uid);
-// };
+const isFriendSelected = (user) => {
+    return Array.isArray(selectedFriends) && selectedFriends.includes(user.uid);
+};
+
+useEffect(() => {
+    const db = getFirestore();
+
+    const unsubscribeUserFriends = onSnapshot(doc(db, "users", auth.currentUser.uid), (doc) => {
+      if (doc.exists()) {
+        setUserFriends(doc.data().friends || {});
+      }
+    }, (error) => {
+      console.error("Error fetching user friends:", error);
+    });
+
+    const fetchSenders = async () => {
+      try {
+        const usersRef = collection(db, "users");
+        const usersSnapshot = await getDocs(usersRef);
+        const sendersData = {};
+        usersSnapshot.forEach((doc) => {
+          sendersData[doc.id] = doc.data();
+        });
+        setSenders(sendersData);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchSenders();
+
+    return () => {
+      unsubscribeUserFriends();
+    };
+}, [auth.currentUser.uid]);
+
+// const renderFriend = ({ item: friendId }) => (
+//     <TouchableOpacity key={friendId} onPress={() => handleFriendClick(friendId)} style={styles.itemuser}>
+//       <Image style={styles.image}
+//         source={{ uri: senders[friendId]?.photoURL }}
+//         alt={senders[friendId]?.name}
+//       />
+//       <Text style={styles.text}>{senders[friendId]?.name}</Text>
+//     </TouchableOpacity>
+// );
+
+const renderFriend = ({ item: friendId }) => (
+    <TouchableOpacity key={friendId} onPress={() => handleFriendClick(friendId)} style={[styles.itemuser, selectedFriends.includes(friendId) && styles.selected]}>
+      <Image style={styles.image}
+        source={{ uri: senders[friendId]?.photoURL }}
+        alt={senders[friendId]?.name}
+      />
+      <Text style={styles.text}>{senders[friendId]?.name}</Text>
+      <TouchableOpacity style={styles.selectButton} onPress={() => toggleSelectFriend(friendId)}>
+        <Text>{selectedFriends.includes(friendId) ? 'Bỏ chọn' : 'Chọn'}</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
+);
 
 return (
     <View style={styles.container}>
         <Text style={styles.title}>Tạo nhóm từ bạn bè sau:</Text>
         <ScrollView>
-            {Object.keys(userFriendsList).length === 0 ? (
-                <Text>Bạn không có bạn bè nào</Text>
+            {Object.keys(userFriends).length === 0 ? (
+              <Text>Bạn không có bạn bè nào</Text>
             ) : (
-                <View>
-                    {userFriendsList.map((friend) => (
-                        <View key={friend.name} style={styles.friendItem}>
-                            <Pressable onPress={() => handleFriendClick(friend.id)} style={styles.itemContainer}>
-                                <View style={styles.itemuser} onPress={() => toggleSelectFriend(friend.id)}>
-                                    <Image style={styles.image} source={{ uri: friend.photoUrl }} />
-                                    <Text style={styles.text}>{friend.name}</Text>
-                                    <TouchableOpacity style={styles.checkboxContainer} onPress={() => handleCheckboxPress(friend.id)}>
-                                        <View style={[styles.checkbox, selectedFriends.includes(friend.id) && styles.checked]} />
-                                    </TouchableOpacity>
-                                </View>
-                            </Pressable>
-                        </View>
-                    ))}
-                </View>
+              <FlatList
+                data={Object.keys(userFriends)}
+                renderItem={renderFriend}
+                keyExtractor={(friendId) => friendId}
+              />
             )}
         </ScrollView>
 
@@ -341,21 +356,10 @@ title: {
     fontWeight: 'bold',
     marginBottom: 10,
 },
-friendItem: {
-    marginBottom: 10,
-},
-itemContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-},
 itemuser: {
     flexDirection: 'row',
-},
-tickIcon: {
-    width: 20,
-    height: 20,
-    marginLeft: 'auto', // Hiển thị ở bên phải của mục bạn bè
-    tintColor: 'green', // Màu của dấu tick
+    alignItems: 'center',
+    marginBottom: 30,
 },
 image: {
     width: 60,
@@ -365,8 +369,8 @@ image: {
 },
 text: {
     fontSize: 18,
-    marginTop: 18,
     marginLeft: 20,
+    flex: 1,
 },
 input: {
     borderWidth: 1,
@@ -381,23 +385,15 @@ createGroupButton: {
     borderRadius: 5,
     alignItems: 'center',
 },
-//
-//
-checkboxContainer: {
-    position: 'absolute',
-    top: 20, // Điều chỉnh vị trí theo cần thiết
-    right: 20, // Điều chỉnh vị trí theo cần thiết
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#418df8', // Màu viền của ô tròn để chọn
-  },
-  checked: {
-    backgroundColor: '#418df8', // Màu nền của ô tròn khi đã được chọn
-  },
+selected: {
+    backgroundColor: '#D3D3D3',
+    borderRadius: 15,
+},
+selectButton: {
+    padding: 8,
+    backgroundColor: '#ADD8E6',
+    borderRadius: 5,
+},
 };
 
 
