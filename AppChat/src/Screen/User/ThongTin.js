@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { auth } from "../../../config/firebase";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-
+import { Picker } from '@react-native-picker/picker';
 const ThongTin = () => {
   const user = auth.currentUser;
   const navigation = useNavigation();
@@ -12,12 +12,18 @@ const ThongTin = () => {
   //const [displayName, setDisplayName] = useState('');
   const [name, setName] = useState('');
   const [photoURL, setPhotoURL] = useState(null);
+  const [day, setDay] = useState('1');
+  const [month, setMonth] = useState('1');
+  const [year, setYear] = useState('2000');
 
   const [gender, setGender] = useState('');
   //const [birthDate, setBirthDate] = useState('');
   const [dateOfBirth, setdateOfBirth] = useState('');
   const [email, setEmail] = useState('');
   //const [newEmail, setNewEmail] = useState(""); 
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
+  const years = Array.from({ length: 120 }, (_, i) => (2024 - i).toString());
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState('');
@@ -74,6 +80,9 @@ const ThongTin = () => {
         setdateOfBirth(userData.dateOfBirth || ''); // Sử dụng ngày sinh nếu có, nếu không thì để trống
         setEmail(userData.email); // Sử dụng email người dùng
         //setNewEmail(userData.email); // Sử dụng email người dùng
+        setEditedName(userData.name); // Initialize editedName with the fetched name
+        setEditedGender(userData.gender || ''); // Initialize editedGender with the fetched gender
+        setEditeddateOfBirth(userData.dateOfBirth || ''); // Initialize editeddateOfBirth with the fetched dateOfBirth
       }
     } catch (error) {
       console.error("Error fetching photo URL: ", error);
@@ -141,41 +150,89 @@ const ThongTin = () => {
         
         <View>
           <Text style={styles.thongtin}>Thông tin cá nhân</Text>
-
-          {isEditing ? (
-            <View style={styles.viewthongtin}>
-              <View style={styles.view3}>
-                <Text style={styles.text2}>Giới tính</Text>
-          <View style={styles.view31}>
-            <TouchableOpacity  style={[styles.gioitinh, gender === 'Nam' && styles.nutgioitinh]}
-              onPressTouchableOpacity
-            ={() => setGender('Nam')}
-            >
-              <Text style={styles.radioText}>Nam</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.gioitinh, gender === 'Nữ' && styles.nutgioitinh]}
-              onPress={() => setGender('Nữ')}
-            >
-              <Text style={styles.radioText}>Nữ</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+          {/* <Text>Nhập lại tên tên:</Text>
+              <Text style={{marginBottom:-10}}>        </Text>
               <TextInput
                 style={styles.input}
-                //value={editedBirthDate}
-                //onChangeText={setEditedBirthDate}
-                value={editeddateOfBirth}
-                onChangeText={setEditeddateOfBirth}
-                placeholder="Ngày sinh"
-              />
+                value={editedName}
+                onChangeText={setEditedName}
+                placeholder="Tên"
+              /> */}
+              
+            <Text style={{marginBottom:-10}}>        </Text>
+            <View>
+          
+        </View>  
+          {isEditing ? (
+            <View style={styles.viewthongtin}>
+              <View style={styles.radioContainer}>
+                  <Text style= {{fontSize: 16}} >Tên:</Text>
+              <Text style={{marginBottom:-10}}>        </Text>
               <TextInput
                 style={styles.input}
                 value={editedName}
                 onChangeText={setEditedName}
                 placeholder="Tên"
               />
+          <Text style={styles.radioLabel}>Giới tính</Text>
+          <View style={styles.radioOptions}>
+          <Text style={styles.radioText}>Nam:</Text>
+            <TouchableOpacity
+              style={[styles.radioButtonMale, editedGender === 'Nam' && styles.selectedRadioButton]}
+              onPress={() => setEditedGender('Nam')}
+            >
+             
+            </TouchableOpacity>
+            <Text style={styles.radioText}>Nữ</Text>
+            <TouchableOpacity
+              style={[styles.radioButtonFMale, editedGender === 'Nữ' && styles.selectedRadioButton]}
+              onPress={() => setEditedGender('Nữ')}
+            >
+              
+            </TouchableOpacity>
+            
+          </View>
+          <Text></Text>
+          <Text style={styles.radioLabel}>Ngày sinh</Text>
+          <View style={styles.datePickerContainer}>
+            <Picker
+              style={styles.datePicker}
+              selectedValue={day}
+              onValueChange={(itemValue, itemIndex) => setDay(itemValue)}
+            >
+              {days.map((day) => (
+                <Picker.Item label={day} value={day} key={day} />
+              ))}
+            </Picker>
+            <Picker
+              style={styles.datePicker}selectedValue={month}
+              onValueChange={(itemValue, itemIndex) => setMonth(itemValue)}
+            >
+              {months.map((month) => (
+                <Picker.Item label={month} value={month} key={month} />
+              ))}
+            </Picker>
+            <Picker
+              style={styles.datePicker}
+              selectedValue={year}
+              onValueChange={(itemValue, itemIndex) => setYear(itemValue)}
+            >
+              {years.map((year) => (
+                <Picker.Item label={year} value={year} key={year} />
+              ))}
+            </Picker>
+          </View>
+        </View>
+            
+              
+               
+            <View style={styles.row1}>
+              <Text style={styles.label1}>Email:</Text>
+              <Text style={styles.data1}>{email}</Text>
+              {/* <Text style={styles.data}>{newEmail}</Text> */}
             </View>
+            </View>
+            
           ) : (
 
           <View style={styles.viewthongtin}>
@@ -210,7 +267,7 @@ const ThongTin = () => {
         ) : (
           <TouchableOpacity style={styles.updateContainer} onPress={() => setIsEditing(true)}>
           <Icon name="create-outline" size={25} color="black" style={styles.updateIcon} />
-          <Text style={styles.updateText}>Chỉnh sửa</Text>
+          <Text style={styles.updateText}>Chỉnh sữa thông tin</Text>
       </TouchableOpacity>
       )}
     </ScrollView>
@@ -222,6 +279,40 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 32,
+    },
+    radioButtonFMale: {
+      width: 20,
+      borderWidth: 1,
+      borderColor: 'gray',
+      paddingVertical: 10,
+      borderRadius: 10,
+      marginLeft: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    radioLabel: {
+      fontSize: 16,
+      marginBottom: 10,
+    },
+    radioOptions: {
+      flexDirection: 'row',
+    },
+    radioContainer: {
+      marginTop: 20,
+    },
+    selectedRadioButton: {
+      backgroundColor: '#006AF5',
+      borderColor: '#006AF5',
+    },
+    radioButtonMale: {
+      width: 20,
+      borderWidth: 1,
+      borderColor: 'gray',
+      paddingVertical: 10,
+      borderRadius: 10,
+      marginRight: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     tback: {
         padding: 5,
@@ -249,6 +340,17 @@ const styles = StyleSheet.create({
       borderRadius: 40,
     },
     userIcon: {
+      marginRight: 10,
+    },
+    datePickerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    datePicker: {
+      flex: 1,
+      height: 58,
+      backgroundColor: "#F6F7FB",
+      borderRadius: 10,
       marginRight: 10,
     },
     userInfo: {
@@ -294,13 +396,29 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginBottom: 5,
     },
-    label: {
+    row1: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 5,
+    },
+    label1: {
       width: 130, // Độ rộng của nhãn (label)
       fontWeight: 'bold',
+      },
+    label1: {
+      width: 130, // Độ rộng của nhãn (label)
+      fontWeight: 'bold',
+      fontSize: 16,
+      //marginBottom: 10,
     },
     data: {
       flex: 1,
       fontSize: 15,
+    },
+    data1: {
+      flex: 1,
+      fontSize: 15,
+      marginLeft:-80,
     },
     // chỉnh sửa
     input: {
@@ -330,4 +448,3 @@ const styles = StyleSheet.create({
 });
 
 export default ThongTin;
-

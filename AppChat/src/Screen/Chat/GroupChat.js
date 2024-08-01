@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity, ScrollView, Image, Pressable } from "react-native";
-import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, collection, query, where } from "firebase/firestore";
+import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion,deleteDoc, arrayRemove, onSnapshot, collection, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -19,6 +19,7 @@ const GroupChat = () => {
   const [name, setName] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [confirmDissolve, setConfirmDissolve] = useState(false);
   const [userId, setUserId] = useState("");
   const [file, setFile] = useState(null);
   const [fileType, setFileType] = useState("");
@@ -159,28 +160,40 @@ const GroupChat = () => {
 
   const sendMessage = async () => {
     try {
-      if ((!messageInput.trim() && !file) || !userId || !groupId) return;
-
-      let fileUrl = "";
-      if (file) {
-        if (fileType === "image" || fileType === "video") {
-          //fileUrl = await uploadImageAsync(file);
-          fileUrl = await pickImage(file);
-        } else {
-          //fileUrl = await uploadFileAsync(file);
-          fileUrl = await pickDocument(file);
-        }
+      if ((!messageInput.trim() && (!file || file.length === 0)) || !userId || !groupId)
+        return;
+  
+      let fileUrls = [];
+      if (file && file.length > 0) {
+        fileUrls = await Promise.all(
+          file.map(async (file) => {
+            const fileType = file.type.split("/")[0];
+            let url = "";
+            if (fileType === "image" || fileType === "video") {
+              url = await pickImage(file);
+              //url = await uploadFileToFirebaseStorage(file);
+            } else if (
+              fileType === "application" ||
+              fileType === "text" ||
+              fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ) {
+              url = await pickDocument(file);
+              // url = await uploadFileToFirebaseStorage(file);
+            }
+            return { url, fileType, fileName: file.name };
+          })
+        );
       }
-
+  
       const newMessage = {
         text: messageInput,
         sender: userId,
         groupId: groupId,
         time: new Date().toLocaleTimeString(),
-        fileUrl: fileUrl,
-        fileType: fileType,
+        fileUrl: fileUrls.length > 0 ? fileUrls.map(file => file.url) : [], // Thêm điều kiện kiểm tra trước khi sử dụng map
+        fileType: fileUrls.length > 0 ? fileUrls.map(file => file.fileType) : [], // Thêm điều kiện kiểm tra trước khi sử dụng map
       };
-
+  
       const db = getFirestore();
       const messagesRef = doc(db, "groupChats", groupId);
       const messagesDoc = await getDoc(messagesRef);
@@ -191,9 +204,9 @@ const GroupChat = () => {
       } else {
         await setDoc(messagesRef, { messages: [newMessage] });
       }
-
+  
       setMessages(prevMessages => [...prevMessages, newMessage]);
-
+  
       setMessageInput("");
       setFile(null);
       setFileType("");
@@ -201,20 +214,36 @@ const GroupChat = () => {
       console.error("Error sending message:", error);
     }
   };
+  const handleDissolveGroup = async () => {
+    try {
+      if (!groupId) return;
+
+      const groupRef = doc(db, "groups", groupId);
+      await deleteDoc(groupRef);
+
+      const messagesRef = doc(db, "groupChats", groupId);
+      await deleteDoc(messagesRef);
+
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error dissolving group:", error);
+    }
+  };
+
 
   const uploadFileAsync = async (file) => async (file, uid, contentType) => {
-  //const uploadFileAsync = async (file, uid, contentType) => {
+  //const uploadFileToFirebaseStorage = async (file, uid, contentType) => {
     const response = await fetch(file);
     const blob = await response.blob();
   
     const extension = file.split('.').pop(); // Lấy phần mở rộng của file
     let storagePath;
     if (contentType.startsWith('image')) {
-      storagePath = `images/${uid}/${new Date().getTime()}.${extension}`;
+      storagePath = `groupChatFiles/${uid}/${new Date().getTime()}.${extension}`;
     } else if (contentType.startsWith('video')) {
-      storagePath = `videos/${uid}/${new Date().getTime()}.${extension}`;
+      storagePath = `groupChatFiles/${uid}/${new Date().getTime()}.${extension}`;
     } else if (contentType.startsWith('application')) {
-      storagePath = `documents/${uid}/${new Date().getTime()}.${extension}`;
+      storagePath = `groupChatFiles/${uid}/${new Date().getTime()}.${extension}`;
     } else {
       throw new Error('Unsupported content type');
     }
@@ -227,32 +256,6 @@ const GroupChat = () => {
   
     return downloadURL;
   };
-
-  // const uploadImageAsync = async () => {
-  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //   if (status !== 'granted') {
-  //     alert('Permission to access camera roll is required!');
-  //     return;
-  //   }
-  
-  //   try {
-  //     const result = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //       allowsEditing: false,
-  //       aspect: [4, 3],
-  //       quality: 1,
-  //       multiple: true
-  //     });
-  
-  //     if (!result.cancelled) {
-  //       const selectedImages = result.assets.filter(image => !selectedImages.includes(image));
-  //       setSelectedImages(prevImages => [...prevImages, ...selectedImages]); // Thêm các ảnh được chọn vào trạng thái selectedImages
-  //     }
-  //   } catch (error) {
-  //     console.error('Error picking file:', error);
-  //   }
-  // };
-
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -273,12 +276,13 @@ const GroupChat = () => {
         const type = result.assets[0].type;
         const text = type.startsWith('video') ? '[Video]' : '[Hình ảnh]';
         const media = type.startsWith('video') ? 'video' : 'image';
-        onSend([{
+        //onSend([{
+        sendMessage([{
           _id: Math.random().toString(),
           createdAt: new Date(),
           user: {
             _id: auth?.currentUser?.uid,
-            avatar: userData?.photoURL || 'default_avatar_url',
+            //avatar: userData?.photoURL || 'default_avatar_url',
           },
           text: text,
           [media]: result.assets[0].uri // Sử dụng [media] để chọn key là 'image' hoặc 'video' tùy thuộc vào loại nội dung
@@ -303,13 +307,14 @@ const GroupChat = () => {
       const extension = getFileExtension(fileName); // Lấy phần mở rộng của tên tệp
       if (!isImageFile(extension) && !isVideoFile(extension)) { // Kiểm tra xem tệp có phải là hình ảnh hoặc video không
         const type = getFileType(extension); // Lấy kiểu tệp dựa trên phần mở rộng của tên tệp
-        onSend([
+        //onSend([
+        sendMessage([
           {
             _id: Math.random().toString(),
             createdAt: new Date(),
             user: {
               _id: auth.currentUser?.uid,
-              avatar: userData?.photoURL || 'default_avatar_url',
+              //avatar: userData?.photoURL || 'default_avatar_url',
             },
             text: message,
             document: { uri, fileName, type } // Đính kèm thông tin về tài liệu
@@ -474,6 +479,16 @@ const GroupChat = () => {
           <Icon name="arrow-back" size={20} color="white" />
         </Pressable>
         <Text style={styles.grname}>{name}</Text>
+        <Pressable onPress={() => setConfirmDissolve(true)}>
+        <Icon1 name="users-slash" size={25} color="#f00" />
+        </Pressable>
+        {confirmDissolve && (
+        <View style={styles.confirmContainer}>
+          <Text>Are you sure you want to dissolve the group?</Text>
+          <Button title="Yes" onPress={handleDissolveGroup} />
+          <Button title="No" onPress={() => setConfirmDissolve(false)} />
+        </View>
+      )}
         <TextInput 
           placeholder="Thêm/Xóa..." 
           value={searchKeyword} 
@@ -655,6 +670,3 @@ const styles = StyleSheet.create({
 });
 
 export default GroupChat;
-
-
-

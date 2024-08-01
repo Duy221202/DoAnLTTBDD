@@ -4,7 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs, query , orderBy, where} from 'firebase/firestore';
 import Icon from "react-native-vector-icons/Ionicons";
-
+import TaoNhomDuy from '../Tab_DanhBa/TaoNhomDuy';
+import DanhSachNhom from '../Tab_DanhBa/DanhSachNhom';
 const Chat = () => {
   const navigation = useNavigation();
   const db = getFirestore();
@@ -12,7 +13,7 @@ const Chat = () => {
   const user = auth.currentUser;
   const [userData, setUserData] = useState(null);
   const [chats, setChats] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState('DanhSachNhom');
   //Tìm nạp dữ liệu người dùng
   useEffect(() => {
     const fetchUserData = async () => {
@@ -112,6 +113,20 @@ useEffect(() => {
     unsubscribeChats();
   };
 }, [db, user]);
+const changePage = (page) => {
+  setCurrentPage(page);
+};
+
+const renderPageContent = () => {
+  switch (currentPage) {
+    case 'TaoNhomDuy':
+      return <TaoNhomDuy />;
+    case 'DanhSachNhom':
+      return <DanhSachNhom />;
+    default:
+      return <View />;
+  }
+};
 
   // Render each chat item
   const renderItem = ({ item }) => (
@@ -133,6 +148,7 @@ useEffect(() => {
       </View>
     </Pressable>
   ); 
+  
 
   // const [userFriends, setUserFriends] = useState({});
   // const [senders, setSenders] = useState({});
@@ -199,12 +215,19 @@ useEffect(() => {
           <Icon name="add" size={30} color="white" style={styles.icon} />
         </View>  
       </SafeAreaView>
-
+      <View style={styles.container}>
+      
+      {renderPageContent()}
+    </View>
       <FlatList
         data={chats}
         renderItem={renderItem}
         keyExtractor={(item, index) => item.ID_room.toString() + '_' + item.otherUser.UID}
       />
+      <View style={styles.navBarNhom}>
+        <TouchableOpacity onPress={() => changePage('DanhSachNhom')}>
+        </TouchableOpacity>
+      </View>
       {/* <Text style={styles.title}></Text>
             {Object.keys(userFriends).length === 0 ? (
               <Text>Bạn không có bạn bè nào</Text>

@@ -10,12 +10,12 @@ const firebaseConfig = {
   // storageBucket: "appchat-b6d1e.appspot.com",
   // messagingSenderId: "168349188203",
   //appId: "1:168349188203:web:1e8eb9b75c4b720a3d712e",
-  apiKey: Constants.expoConfig.extra.apiKey,
-  authDomain: Constants.expoConfig.extra.authDomain,
-  projectId: Constants.expoConfig.extra.projectId,
-  storageBucket: Constants.expoConfig.extra.storageBucket,
-  messagingSenderId: Constants.expoConfig.extra.messagingSenderId,
-  appId: Constants.expoConfig.extra.appId,
+  apiKey: "AIzaSyBkWISHzZFgFJEmOYwnLkmXvv10rFbGBy4",
+  authDomain: "cnm22-cb484.firebaseapp.com",
+  projectId: "cnm22-cb484",
+  storageBucket: "cnm22-cb484.appspot.com",
+  messagingSenderId: "200652113295",
+  appId: "1:200652113295:web:ac3c62994e0b38c572f7fa",
 };
 // initialize firebase
 initializeApp(firebaseConfig);
